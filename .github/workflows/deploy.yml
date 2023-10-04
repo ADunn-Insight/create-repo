@@ -41,7 +41,6 @@ jobs:
     - name: Copy README.md
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
-        cd ..
         mkdir $REPO_NAME
         cp README.md ${{ github.workspace/$REPO_NAME }}
 
