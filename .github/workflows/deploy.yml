@@ -38,9 +38,6 @@ jobs:
       run: |
         echo "REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
 
-    - name: Copy README.md
-      run: cp README.md ${{ github.workspace }}
-
     - name: Add, Commit, and Push README.md
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
