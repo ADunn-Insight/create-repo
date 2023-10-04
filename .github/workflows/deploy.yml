@@ -9,7 +9,6 @@ on:
       description:
         description: 'Repository Description'
         required: true
-
 jobs:
   create-repo:
     runs-on: ubuntu-latest
