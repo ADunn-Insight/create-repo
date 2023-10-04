@@ -33,13 +33,5 @@ jobs:
         echo "::set-output name=repository_name::${REPO_NAME}"
       shell: bash
 
-    # - id: output
-    #   run: |
-    #     echo "ENVIRONMENT=${{ env.ENVIRONMENT }}" >> "$GITHUB_OUTPUT"
-    #     echo "PROJECT_NAME=${{ env.PROJECT_NAME }}" >> "$GITHUB_OUTPUT"
-
-    # - name: Set Repository Name
-    #   run: echo "REPOSITORY_NAME=${{ github.event.inputs.repoName }}" >> $GITHUB_ENV
-
-    # - name: Show Repository Name
-    #   run: echo "Repository Name: $REPOSITORY_NAME"
+    - name: Show Repository Name
+      run: echo "Repository Name: ${{ github.event.inputs.repoName }}"
