@@ -48,7 +48,7 @@ jobs:
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         cd ${{ github.workspace }}/$REPO_NAME
-        git config --global user.email "vishalchaudhary@gmail.com"
+        git config --global user.email "vishalchaudhary42929@gmail.com"
         git config --global user.name "Vishal Chaudhary"
         git init
         git add .
