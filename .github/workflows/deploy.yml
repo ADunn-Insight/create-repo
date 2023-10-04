@@ -38,10 +38,17 @@ jobs:
       run: |
         echo "REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
 
+    - name: Copy README.md
+      run: |
+        REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        cd ..
+        mkdir $REPO_NAME
+        cp README.md ${{ github.workspace/$REPO_NAME }}
+
     - name: Add, Commit, and Push README.md
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
-        cd ${{ github.workspace }}
+        cd ${{ github.workspace/$REPO_NAME }}
         git config user.email "github-actions@github.com"
         git config user.name "GitHub Actions"
         git init
