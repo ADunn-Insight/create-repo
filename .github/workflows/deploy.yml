@@ -30,10 +30,63 @@ jobs:
         curl -X POST -H "Authorization: token $GH_PAT" \
           https://api.github.com/orgs/chvi-devops/repos -d "{\"name\":\"$REPO_NAME\",\"description\":\"$DESCRIPTION\",\"private\":true}"
         
-        echo "REPO_NAME=${{ github.event.inputs.repoName }}" >> "$GITHUB_ENV"
+        echo "REPOSITORY_NAME=${{ github.event.inputs.repoName }}" >> "$GITHUB_ENV"
       shell: bash
     
-    - id: output
+    - name: Output Repo name
+      id: output
       run: |
         echo "REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
+        
+    - name: Add Main and Development Branches
+      run: |
+        REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
+        
+        # Add Main branch
+        curl -X POST -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/chvi-devops/$REPO_NAME/git/refs" -d "{\"ref\":\"refs/heads/main\",\"sha\":\"$(curl -s -H 'Authorization: token $GH_PAT' https://api.github.com/repos/your-org/$REPO_NAME/git/refs/heads/main | jq -r '.object.sha')\"}"
+        
+        # Add Development branch
+        curl -X POST -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/chvi-devops/$REPO_NAME/git/refs" -d "{\"ref\":\"refs/heads/development\",\"sha\":\"$(curl -s -H 'Authorization: token $GH_PAT' https://api.github.com/repos/your-org/$REPO_NAME/git/refs/heads/main | jq -r '.object.sha')\"}"
+      shell: bash
+
+    - name: Configure Branch Protection
+      run: |
+        REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
+        
+        # Enable branch protection for Main branch
+        curl -X PUT -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/chvi-devops/$REPO_NAME/branches/main/protection" -d '{
+            "required_status_checks": null,
+            "enforce_admins": null,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": 1
+            },
+            "restrictions": null,
+            "required_linear_history": false,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }'
+        
+        # Enable branch protection for Development branch
+        curl -X PUT -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/chvi-devops/$REPO_NAME/branches/development/protection" -d '{
+            "required_status_checks": null,
+            "enforce_admins": null,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": true,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": 1
+            },
+            "restrictions": null,
+            "required_linear_history": false,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }'
+      shell: bash
 
