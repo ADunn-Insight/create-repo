@@ -37,20 +37,37 @@ jobs:
       id: output
       run: |
         echo "REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
-        
-    - name: Add Main and Development Branches
+
+    - name: Copy README.md
+      run: cp README.md ${{ github.workspace }}
+
+    - name: Add, Commit, and Push README.md
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
-        GH_PAT="${{ secrets.GH_PAT }}"
+        cd ${{ github.workspace }}
+        git config user.email "github-actions@github.com"
+        git config user.name "GitHub Actions"
+        git init
+        git add .
+        git commit -m "Add README.md"
+        git remote add origin "https://github.com/chvi-devops/$REPO_NAME.git"
+        git branch -M main
+        git branch development
+        git push -u origin main
         
-        # Add Main branch
-        curl -X POST -H "Authorization: token $GH_PAT" \
-          "https://api.github.com/repos/chvi-devops/$REPO_NAME/git/refs" -d "{\"ref\":\"refs/heads/main\",\"sha\":\"$(curl -s -H 'Authorization: token $GH_PAT' https://api.github.com/repos/your-org/$REPO_NAME/git/refs/heads/main | jq -r '.object.sha')\"}"
+    # - name: Add Main and Development Branches
+    #   run: |
+    #     REPO_NAME="${{ env.REPOSITORY_NAME }}"
+    #     GH_PAT="${{ secrets.GH_PAT }}"
         
-        # Add Development branch
-        curl -X POST -H "Authorization: token $GH_PAT" \
-          "https://api.github.com/repos/chvi-devops/$REPO_NAME/git/refs" -d "{\"ref\":\"refs/heads/development\",\"sha\":\"$(curl -s -H 'Authorization: token $GH_PAT' https://api.github.com/repos/your-org/$REPO_NAME/git/refs/heads/main | jq -r '.object.sha')\"}"
-      shell: bash
+    #     # Add Main branch
+    #     curl -X POST -H "Authorization: token $GH_PAT" \
+    #       "https://api.github.com/repos/chvi-devops/$REPO_NAME/git/refs" -d "{\"ref\":\"refs/heads/main\",\"sha\":\"$(curl -s -H 'Authorization: token $GH_PAT' https://api.github.com/repos/your-org/$REPO_NAME/git/refs/heads/main | jq -r '.object.sha')\"}"
+        
+    #     # Add Development branch
+    #     curl -X POST -H "Authorization: token $GH_PAT" \
+    #       "https://api.github.com/repos/chvi-devops/$REPO_NAME/git/refs" -d "{\"ref\":\"refs/heads/development\",\"sha\":\"$(curl -s -H 'Authorization: token $GH_PAT' https://api.github.com/repos/your-org/$REPO_NAME/git/refs/heads/main | jq -r '.object.sha')\"}"
+    #   shell: bash
 
     - name: Configure Branch Protection
       run: |
