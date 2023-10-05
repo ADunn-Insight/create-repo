@@ -109,7 +109,7 @@ jobs:
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         GH_PAT="${{ secrets.GH_PAT }}"
         GH_PAT="${{ secrets.GH_PAT }}"
-        TEAM_NAME="TeamA"
+        TEAM_NAME="teama"
 
         TEAM_ID=$(curl -s -X GET -H "Authorization: token $GH_PAT" \
           "https://api.github.com/orgs/$ORG_NAME/teams" | jq -r ".[] | select(.name == \"$TEAM_NAME\") | .id")
