@@ -29,6 +29,7 @@ jobs:
           
         response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GH_PAT" \
           "https://api.github.com/repos/$ORG_NAME/$REPO_NAME")
+        echo "$response"
 
         if [ "$response" = "200" ]; then
           echo "repo_exists=true" >> "$GITHUB_ENV"
