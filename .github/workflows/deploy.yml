@@ -18,7 +18,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       REPOSITORY_NAME: ${{ github.event.inputs.repoName }}
-      REPO_EXISTS: ${{ steps.output.outputs.REPO_EXISTS }}
 
     steps:
     - name: Check if Repository Already Exists
