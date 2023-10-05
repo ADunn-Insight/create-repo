@@ -39,10 +39,10 @@ jobs:
       shell: bash
 
     - name: Stop Workflow If Repository Exist
-      if: ${{ env.REPO_EXISTS }} == "true"
       run: |
-        echo "The repository already exist. Stopping the workflow."
-        exit 1
+        if [ "${{ env.REPO_EXISTS }}" == "true"]; then
+          echo "The repository already exist. Stopping the workflow."
+          exit 1
 
     - name: Checkout code
       uses: actions/checkout@v2
