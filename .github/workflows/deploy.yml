@@ -54,11 +54,11 @@ jobs:
         git init
         git add .
         git commit -m "Add README.md"
-        git remote add origin "https://github.com/ch-devops/$REPO_NAME.git"
+        git remote add origin "https://github.com/chvi-devops/$REPO_NAME.git"
         git branch -M main
         git branch development
         git checkout development
-        git push https://$GH_PAT@github.com/ch-devops/$REPO_NAME.git HEAD:development
+        git push https://$GH_PAT@github.com/chvi-devops/$REPO_NAME.git HEAD:development
         
     # - name: Add Main and Development Branches
     #   run: |
