@@ -28,7 +28,7 @@ jobs:
         GH_PAT="${{ secrets.GH_PAT }}"
           
         response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GH_PAT" \
-          "https://api.github.com/orgs/$ORG_NAME/repos/$REPO_NAME")
+          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME")
 
         if [ "$response" = "200" ]; then
           echo "repo_exists=true" >> "$GITHUB_ENV"
