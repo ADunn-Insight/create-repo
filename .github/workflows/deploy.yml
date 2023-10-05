@@ -116,6 +116,6 @@ jobs:
         # Add TeamA as a possible reviewer team to the repository
         curl -X POST -H "Authorization: token $GH_PAT" \
         "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/teams/$TEAM_ID/repos/$REPO_NAME/teams" -d '{
-        "permission": "pull"
+        "permission": "Triage"
         }'
       shell: bash
