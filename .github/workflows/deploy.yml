@@ -55,7 +55,7 @@ jobs:
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         cd ${{ github.workspace }}/$REPO_NAME
         git config --global user.email "Demouser@gmail.com"
-        git config --global user.name "Demo User"
+        git config --global user.name "DemoUser"
         git init
         git add .
         git commit -m "Add README.md"
@@ -116,6 +116,8 @@ jobs:
 
         echo "Team ID for $TEAM_NAME: $TEAM_ID"
 
+        OWNER_NAME=$(curl -s -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME" | jq -r '.owner.login')
     
         # Get the TeamA's ID (replace 'TeamA' with the actual team name)
         TEAM_ID=$(curl -s -X GET -H "Authorization: token $GH_PAT" \
@@ -123,7 +125,7 @@ jobs:
 
         # Add TeamA as a possible reviewer team to the repository
         curl -X PUT -H "Authorization: token $GH_PAT" \
-        "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_NAME/repos/$REPO_NAME" -d '{
+        "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_NAME/repos/$OWNER_NAME/$REPO_NAME" -d '{
         "permission": "Triage"
         }'
       shell: bash
