@@ -49,16 +49,16 @@ jobs:
         GH_PAT="${{ secrets.GH_PAT }}"
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         cd ${{ github.workspace }}/$REPO_NAME
-        git config --global user.email "vishalchaudhary@gmail.com"
-        git config --global user.name "Vishal Chaudhary"
+        git config --global user.email "Demouser@gmail.com"
+        git config --global user.name "Demo User"
         git init
         git add .
         git commit -m "Add README.md"
-        git remote add origin "https://github.com/chvi-devops/$REPO_NAME.git"
+        git remote add origin "https://$GH_PAT@github.com/chvi-devops/$REPO_NAME.git"
         git branch -M main
         git branch development
         git checkout development
-        git push https://$GH_PAT@github.com/chvi-devops/$REPO_NAME.git HEAD:development
+        git push --all origin
         
     # - name: Add Main and Development Branches
     #   run: |
