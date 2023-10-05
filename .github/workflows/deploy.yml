@@ -118,4 +118,4 @@ jobs:
         "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/teams/$TEAM_ID/repos/$REPO_NAME/teams" -d '{
         "permission": "pull"
         }'
-  shell: bash
+      shell: bash
