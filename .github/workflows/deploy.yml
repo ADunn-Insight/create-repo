@@ -28,8 +28,8 @@ jobs:
         
         # Create the repository using the GitHub API and set it as internal
         curl -X POST -H "Authorization: token $GH_PAT" \
-          https://api.github.com/orgs/chvi-devops/repos -d "{\"name\":\"$REPO_NAME\",\"description\":\"$DESCRIPTION\",\"private\":true}"
-        
+          https://api.github.com/orgs/chvi-devops/repos -d "{\"name\":\"$REPO_NAME\",\"description\":\"$DESCRIPTION\"}"
+        # https://api.github.com/orgs/chvi-devops/repos -d "{\"name\":\"$REPO_NAME\",\"description\":\"$DESCRIPTION\",\"private\":true}"
         echo "REPOSITORY_NAME=${{ github.event.inputs.repoName }}" >> "$GITHUB_ENV"
       shell: bash
     
