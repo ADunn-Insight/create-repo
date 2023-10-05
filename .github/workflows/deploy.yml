@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       REPOSITORY_NAME: ${{ github.event.inputs.repoName }}
+      REPO_EXISTS: ${{ steps.repo_status.outputs.REPO_EXISTS }}
 
     steps:
     - name: Check if Repository Already Exists
@@ -39,12 +40,12 @@ jobs:
       shell: bash
 
     - name: Output the REPO_EXITS status
-      id: output
+      id: repo_status
       run: |
         echo "REPO_EXISTS=${{ env.REPO_EXISTS }}" >> "$GITHUB_OUTPUT"
 
     - name: Stop Workflow If Repository Exist
-      if: steps.output.outputs.REPO_EXISTS == 'true'
+      if: steps.repo_status.outputs.REPO_EXISTS == 'true'
       run: |
         echo "The repository already exist. Stopping the workflow."
         exit 1
