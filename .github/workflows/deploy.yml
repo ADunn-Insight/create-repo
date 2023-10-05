@@ -122,8 +122,8 @@ jobs:
         "https://api.github.com/orgs/$ORG_NAME/teams/TeamA" | jq -r '.id')
 
         # Add TeamA as a possible reviewer team to the repository
-        curl -X PUT -H "Authorization: token $GH_PAT" -H "Content-Length: 0" \
-        "https://api.github.com/organizations/$ORG_NAME/team/$TEAM_ID/repos/$REPO_NAME" -d '{
+        curl -X PUT -H "Authorization: token $GH_PAT" \
+        "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_NAME/repos/$REPO_NAME" -d '{
         "permission": "Triage"
         }'
       shell: bash
