@@ -26,20 +26,21 @@ jobs:
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         GH_PAT="${{ secrets.GH_PAT }}"
+        REPO_EXISTS = ""
           
         response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GH_PAT" \
           "https://api.github.com/repos/$ORG_NAME/$REPO_NAME")
         echo "$response"
 
         if [ "$response" = "200" ]; then
-          echo "repo_exists=true" >> "$GITHUB_ENV"
+          echo "REPO_EXISTS=true" >> "$GITHUB_ENV"
         else
-          echo "repo_exists=false" >> "$GITHUB_ENV"
+          echo "REPO_EXISTS=false" >> "$GITHUB_ENV"
         fi
       shell: bash
 
     - name: Stop Workflow If Repository Exist
-      if: ${{ env.repo_exists }} == 'true'
+      if: ${{ env.REPO_EXISTS }} == 'true'
       run: |
         echo "The repository already exist. Stopping the workflow."
         exit 1
