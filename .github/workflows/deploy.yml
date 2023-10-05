@@ -26,13 +26,12 @@ jobs:
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         GH_PAT="${{ secrets.GH_PAT }}"
-        REPO_EXISTS = ""
           
         response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GH_PAT" \
           "https://api.github.com/repos/$ORG_NAME/$REPO_NAME")
         echo "$response"
 
-        if [ "$response" = "200" ]; then
+        if [ "$response" == "200" ]; then
           echo "REPO_EXISTS=true" >> "$GITHUB_ENV"
         else
           echo "REPO_EXISTS=false" >> "$GITHUB_ENV"
