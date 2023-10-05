@@ -2,6 +2,7 @@ name: Create and Configure GitHub Repo
 
 env:
   ORGANIZATION_NAME: 'chvi-devops'
+  TEAM_NAME: 'TeamA'
   
 on:
   workflow_dispatch:
@@ -109,16 +110,11 @@ jobs:
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         GH_PAT="${{ secrets.GH_PAT }}"
         GH_PAT="${{ secrets.GH_PAT }}"
-        TEAM_NAME="teama"
-
-        # Get the Owner name of the repo
-        OWNER_NAME=$(curl -s -H "Authorization: token $GH_PAT" \
-        "https://api.github.com/repos/$ORG_NAME/$REPO_NAME" | jq -r '.owner.login')
-        echo "Owner Name: $OWNER_NAME"
+        TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
         # Add TeamA as a possible reviewer team to the repository
         curl -X PUT -H "Authorization: token $GH_PAT" \
-        "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_NAME/repos/$OWNER_NAME/$REPO_NAME" -d '{
+        "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME" -d '{
         "permission": "triage"
         }'
       shell: bash
