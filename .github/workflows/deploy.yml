@@ -82,7 +82,7 @@ jobs:
         git init
         git add .
         git commit -m "Add README.md"
-        git remote add origin "https://$GITHUB_TOKEN@github.com/$ORG_NAME/$REPO_NAME.git"
+        git remote add origin "https://github.com/$ORG_NAME/$REPO_NAME.git"
         git branch -M main
         git branch development
         git push --all origin
