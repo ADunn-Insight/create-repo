@@ -14,27 +14,20 @@ on:
         description: 'Repository Description'
         required: true
 jobs:
-  CreateRepo:
+  create-repo:
     name: "Deploy New Repositories"
     runs-on: ubuntu-latest
     steps:
-    - name: Generate a token
-      id: generate_token
-      uses: actions/create-github-app-token@v1
-      with:
-        app_id: ${{ secrets.APP_ID }}
-        private_key: ${{ secrets.APP_PRIVATE_KEY }}
-
     - name: Check if Repository Already Exists
       id: check_repo
       run: |
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        GITHUB_TOKEN="${{ steps.generate_token.outputs.token }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
           
-        response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+        response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GH_PAT" \
           "https://api.github.com/repos/$ORG_NAME/$REPO_NAME")
-
+        echo "$response"
         if [ "$response" == "200" ]; then
           echo "REPO_EXISTS=true" >> "$GITHUB_OUTPUT"
         else
@@ -52,50 +45,50 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Create Repository
+      id: create_repo
       run: |
         REPO_NAME="${{ github.event.inputs.repoName }}"
         DESCRIPTION="${{ github.event.inputs.description }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        GITHUB_TOKEN="${{ steps.generate_token.outputs.token }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
         
         # Create the repository using the GitHub API and set it as internal
-        curl -X POST -H "Authorization: token $GITHUB_TOKEN" \
+        curl -X POST -H "Authorization: token $GH_PAT" \
           https://api.github.com/orgs/$ORG_NAME/repos -d "{\"name\":\"$REPO_NAME\",\"description\":\"$DESCRIPTION\"}"
         # https://api.github.com/orgs/$ORG_NAME/repos -d "{\"name\":\"$REPO_NAME\",\"description\":\"$DESCRIPTION\",\"private\":true}"
         echo "REPOSITORY_NAME=${{ github.event.inputs.repoName }}" >> "$GITHUB_ENV"
       shell: bash
-
-    - name: Copy README.md to the created Repository 
+    
+    - name: Copy README.md
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         mkdir $REPO_NAME
         cp README.md ${{ github.workspace }}/$REPO_NAME
 
-    - name: Add, Commit, and Push README.md to the created Repository  
-      env:
-        REPO_NAME: ${{ env.REPOSITORY_NAME }}
-        ORG_NAME: ${{ env.ORGANIZATION_NAME }}
+    - name: Add, Commit, and Push README.md
       run: |
+        GH_PAT="${{ secrets.GH_PAT }}"
+        REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         cd ${{ github.workspace }}/$REPO_NAME
         git config --global user.email "Demouser@gmail.com"
         git config --global user.name "DemoUser"
         git init
         git add .
         git commit -m "Add README.md"
-        git remote add origin "https://github.com/$ORG_NAME/$REPO_NAME.git"
+        git remote add origin "https://$GH_PAT@github.com/$ORG_NAME/$REPO_NAME.git"
         git branch -M main
-        git branch 
-        gh auth login --with-token <<< ${{ steps.generate_token.outputs.token }}
+        git branch development
         git push --all origin
 
-    - name: Configure Branch Protection on the created Repository
+    - name: Configure Branch Protection
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        GITHUB_TOKEN="${{ steps.generate_token.outputs.token }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
         
         # Enable branch protection for Main branch
-        curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
+        curl -X PUT -H "Authorization: token $GH_PAT" \
           "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/main/protection" -d '{
             "required_status_checks": null,
             "enforce_admins": null,
@@ -111,7 +104,7 @@ jobs:
           }'
         
         # Enable branch protection for Development branch
-        curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
+        curl -X PUT -H "Authorization: token $GH_PAT" \
           "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/development/protection" -d '{
             "required_status_checks": null,
             "enforce_admins": null,
@@ -127,23 +120,16 @@ jobs:
           }'
       shell: bash
   
-    - name: Add TeamA as a Reviewer Team to the created Repository
+    - name: Add TeamA as a Reviewer Team
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        GITHUB_TOKEN="${{ steps.generate_token.outputs.token }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
-
         # Add TeamA as a possible reviewer team to the repository
-        curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
+        curl -X PUT -H "Authorization: token $GH_PAT" \
         "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME" -d '{
         "permission": "triage"
         }'
       shell: bash
-      
-  # CopyTemplate:
-  #   name: "Deploy New Repositories"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: 
-
