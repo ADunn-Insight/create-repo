@@ -76,7 +76,6 @@ jobs:
         REPO_NAME: ${{ env.REPOSITORY_NAME }}
         ORG_NAME: ${{ env.ORGANIZATION_NAME }}
       run: |
-        GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
         cd ${{ github.workspace }}/$REPO_NAME
         git config --global user.email "Demouser@gmail.com"
         git config --global user.name "DemoUser"
@@ -86,7 +85,7 @@ jobs:
         git remote add origin "https://github.com/$ORG_NAME/$REPO_NAME.git"
         git branch -M main
         git branch 
-        gh auth login --with-token <<< $GITHUB_TOKEN
+        gh auth login --with-token <<< ${{ steps.generate_token.outputs.token }}
         git push --all origin
 
     - name: Configure Branch Protection on the created Repository
