@@ -73,10 +73,10 @@ jobs:
 
     - name: Add, Commit, and Push README.md to the created Repository  
       env:
-        GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
         REPO_NAME: ${{ env.REPOSITORY_NAME }}
         ORG_NAME: ${{ env.ORGANIZATION_NAME }}
       run: |
+        GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
         cd ${{ github.workspace }}/$REPO_NAME
         git config --global user.email "Demouser@gmail.com"
         git config --global user.name "DemoUser"
