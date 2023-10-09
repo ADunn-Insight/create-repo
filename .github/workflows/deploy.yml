@@ -67,8 +67,8 @@ jobs:
         # Create a directory with the name of new repository created
         mkdir $REPO_NAME
 
-        # Using rsync to copy all files and folders from from the 'templates' folder to the new repository folder
-        rsync -av templates/* ${{ github.workspace }}/$REPO_NAME/
+        # Using cp command to copy all files and folders from from the 'templates' folder to the new repository folder
+        cp -a templates/. ${{ github.workspace }}/$REPO_NAME/
       shell: bash
 
 
@@ -83,7 +83,7 @@ jobs:
         git init
         git branch -M main
         git add README.md
-        git commit -m "Add README.md"
+        git commit -m "Added README.md"
         git remote add origin "https://$GH_PAT@github.com/$ORG_NAME/$REPO_NAME.git"
         git push origin main
         git branch development
