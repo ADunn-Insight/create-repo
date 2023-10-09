@@ -29,17 +29,3 @@ Documentation is available on the [Terraform website](https://www.terraform.io):
 - [Documentation](https://www.terraform.io/docs)
 
 If you're new to Terraform and want to get started creating infrastructure, please check out our [Getting Started guides](https://learn.hashicorp.com/terraform#getting-started) on HashiCorp's learning platform. There are also [additional guides](https://learn.hashicorp.com/terraform#operations-and-development) to continue your learning.
-
-## Developing Terraform
-
-This repository contains only Terraform core, which includes the command line interface and the main graph engine. Providers are implemented as plugins, and Terraform can automatically download providers that are published on [the Terraform Registry](https://registry.terraform.io). HashiCorp develops some providers, and others are developed by other organizations. For more information, see [Extending Terraform](https://www.terraform.io/docs/extend/index.html).
-
-- To learn more about compiling Terraform and contributing suggested changes, refer to [the contributing guide](.github/CONTRIBUTING.md).
-
-- To learn more about how we handle bug reports, refer to the [bug triage guide](./BUGPROCESS.md).
-
-- To learn how to contribute to the Terraform documentation in this repository, refer to the [Terraform Documentation README](/website/README.md).
-
-## License
-
-[Business Source License 1.1](https://github.com/hashicorp/terraform/blob/main/LICENSE)
