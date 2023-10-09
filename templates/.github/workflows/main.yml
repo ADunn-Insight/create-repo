@@ -1,6 +1,7 @@
 name: Sample workflow
   
-trigger: none
+on:
+  
 
 jobs:
   first-job:
