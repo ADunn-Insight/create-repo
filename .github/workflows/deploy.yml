@@ -59,11 +59,18 @@ jobs:
         echo "REPOSITORY_NAME=${{ github.event.inputs.repoName }}" >> "$GITHUB_ENV"
       shell: bash
     
-    - name: Copy README.md
-      run: |
-        REPO_NAME="${{ env.REPOSITORY_NAME }}"
-        mkdir $REPO_NAME
-        cp README.md ${{ github.workspace }}/$REPO_NAME
+      - name: Copy Template Files to the New Repositor
+        run: |
+          REPO_NAME="${{ env.REPOSITORY_NAME }}"
+          ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+    
+          # Create a directory in the repository root 
+          mkdir $REPO_NAME
+
+          # Copy all files from the 'templates' folder to the new repository folder
+          cp -r templates/* ${{ github.workspace }}/$REPO_NAME/
+        shell: bash
+
 
     - name: Add, Commit, and Push README.md
       run: |
