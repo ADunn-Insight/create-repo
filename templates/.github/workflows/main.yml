@@ -1,7 +1,7 @@
 name: Sample workflow
   
 on:
-  
+  pull_request:
 
 jobs:
   first-job:
