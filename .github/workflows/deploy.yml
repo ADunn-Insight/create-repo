@@ -193,4 +193,23 @@ jobs:
         sed -i "s|tags|$TAG_NAMES|g" ${{ github.workspace }}/template-workspaces.tfvars
 
         cat "${{ github.workspace }}/template-workspaces.tfvars"
+        
+        # Read the existing workspaces.tfvars content
+        cat workspaces.tfvars
+
+        # Read the existing workspaces.tfvars content and parse it to a data structure
+        workspaces_data=$(cat workspaces.tfvars | jq -r .)
+
+        # Read the contents of test.tfvars
+        test_data=$(cat "${{ github.workspace }}/template-workspaces.tfvars" | jq -r .)
+
+        # Merge test_data into workspaces_data
+        merged_data=$(echo "$workspaces_data" "$test_data" | jq -s '.[0].workspaces += .[1]')
+
+        # Write the updated data back to workspaces.tfvars
+        echo "$merged_data" > workspaces.tfvars
+
+        # Display the updated workspaces.tfvars content
+        cat workspaces.tfvars
+
       shell: bash
