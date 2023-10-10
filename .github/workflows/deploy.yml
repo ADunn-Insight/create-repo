@@ -202,7 +202,7 @@ jobs:
         # Read the existing workspaces.tfvars content
         cat workspaces.tfvars
         
-        sed -i '/workspaces = {/,/}/s/}$/\n'"$UPDATED_OBJECT"'\n}/' "${{ github.workspace }}/workspaces.tfvars"
+        sed -i '/workspaces = {/,/}/s/}$/\n'"$UPDATED_OBJECT"'\n}/' workspaces.tfvars
 
         cat workspaces.tfvars
 
