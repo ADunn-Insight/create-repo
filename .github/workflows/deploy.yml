@@ -163,6 +163,9 @@ jobs:
     name: "Create new tfc-workspace"
     runs-on: ubuntu-latest
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+      
     - name: Clone the worskspace repo
       run: |
         GH_PAT="${{ secrets.GH_PAT }}"
