@@ -207,7 +207,7 @@ jobs:
         awk 'BEGIN { found = 0 }
         /workspaces = {/ { found = 1; print; next }
         found && /}/ { found = 0; print "  " ENVIRON["UPDATED_OBJECT"] "\n}" }
-        { if (!found) print }' "${{ github.workspace }}/workspaces.tfvars" > "$TMP_FILE"
+        { if (!found) print }' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "$TMP_FILE"
 
         # Replace the original file with the updated one
         mv "$TMP_FILE" workspaces.tfvars
