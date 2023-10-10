@@ -182,38 +182,45 @@ jobs:
     - name: Manipulate and Update Workspace Object
       run: |
         WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
+        VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
+        TAG_NAMES='${{ github.event.inputs.workspaceTagsName }}'
+        PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
 
-        sed -i "1s/abc-workspace/$WORKSPACE_NAME/" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s/abc_workspace/$WORKSPACE_NAME/g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s/abc_variable_set/$VARIABLE_SET_NAME/g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s/abc_project_name/$PROJECT_NAME/g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s/[""]/$TAG_NAMES/g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s/abc-workspace/$WORKSPACE_NAME/g" ${{ github.workspace }}/template-workspaces.tfvars
 
-        # Read the abc-workspace object from template-workspace.tf
-        TEMPLATE_WORKSPACE_OBJECT=$(cat ${{ github.workspace }}/template-workspaces.tfvars)
+        # # Read the abc-workspace object from template-workspace.tf
+        # TEMPLATE_WORKSPACE_OBJECT=$(echo cat ${{ github.workspace }}/template-workspaces.tfvars)
 
-        # Manipulate the values based on input parameters
-        NEW_NAME="${{ github.event.inputs.workspaceName }}"
-        NEW_TAG_NAMES='${{ github.event.inputs.workspaceTagsName }}'
-        NEW_VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
-        NEW_PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
+        # # Manipulate the values based on input parameters
+        # NEW_NAME="${{ github.event.inputs.workspaceName }}"
+        # NEW_TAG_NAMES='${{ github.event.inputs.workspaceTagsName }}'
+        # NEW_VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
+        # NEW_PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
 
-        # Rename the abc-workspace object with the new workspace name
-        MODIFIED_WORKSPACE_OBJECT=$(echo "$TEMPLATE_WORKSPACE_OBJECT" | jq --arg NEW_NAME "$NEW_NAME" \
-            --arg NEW_KEY "$NEW_NAME" \
-            --arg NEW_TAG_NAMES "$NEW_TAG_NAMES" \
-            --arg NEW_VARIABLE_SET_NAME "$NEW_VARIABLE_SET_NAME" \
-            --arg NEW_PROJECT_NAME "$NEW_PROJECT_NAME" \
-            'to_entries | map(if .key == $NEW_NAME then . + {"value": {"name": $NEW_NAME, "key": $NEW_NAME, "tag_names": $NEW_TAG_NAMES, "variable_set_name": $NEW_VARIABLE_SET_NAME, "project_name": $NEW_PROJECT_NAME}} else . end) | from_entries')
+        # # Rename the abc-workspace object with the new workspace name
+        # MODIFIED_WORKSPACE_OBJECT=$(echo "$TEMPLATE_WORKSPACE_OBJECT" | jq --arg NEW_NAME "$NEW_NAME" \
+        #     --arg NEW_KEY "$NEW_NAME" \
+        #     --arg NEW_TAG_NAMES "$NEW_TAG_NAMES" \
+        #     --arg NEW_VARIABLE_SET_NAME "$NEW_VARIABLE_SET_NAME" \
+        #     --arg NEW_PROJECT_NAME "$NEW_PROJECT_NAME" \
+        #     'to_entries | map(if .key == $NEW_NAME then . + {"value": {"name": $NEW_NAME, "key": $NEW_NAME, "tag_names": $NEW_TAG_NAMES, "variable_set_name": $NEW_VARIABLE_SET_NAME, "project_name": $NEW_PROJECT_NAME}} else . end) | from_entries')
 
-        # Update workspaces.tfvars with the modified workspace object
-        TFE_TFVARS_FILE="${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
-        TFE_TFVARS_JSON=$(cat "$TFE_TFVARS_FILE" | jq .)
-        UPDATED_TFE_TFVARS_JSON=$(echo "$TFE_TFVARS_JSON" | jq --argjson MODIFIED_WORKSPACE_OBJECT "$MODIFIED_WORKSPACE_OBJECT" '.workspaces += [$MODIFIED_WORKSPACE_OBJECT]')
+        # # Update workspaces.tfvars with the modified workspace object
+        # TFE_TFVARS_FILE="${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
+        # TFE_TFVARS_JSON=$(cat "$TFE_TFVARS_FILE" | jq .)
+        # UPDATED_TFE_TFVARS_JSON=$(echo "$TFE_TFVARS_JSON" | jq --argjson MODIFIED_WORKSPACE_OBJECT "$MODIFIED_WORKSPACE_OBJECT" '.workspaces += [$MODIFIED_WORKSPACE_OBJECT]')
 
-        # Write the updated JSON structure back to workspaces.tfvars
-        echo "$UPDATED_TFE_TFVARS_JSON" > "$TFE_TFVARS_FILE"
+        # # Write the updated JSON structure back to workspaces.tfvars
+        # echo "$UPDATED_TFE_TFVARS_JSON" > "$TFE_TFVARS_FILE"
 
-        # Commit and push changes to the workspace-repo repository
-        cd ${{ github.workspace }}/$REPO_NAME
-        git add .
-        git commit -m "Updated workspaces.tfvars file"
-        git push origin feat-$WORKSPACE_NAME
+        # # Commit and push changes to the workspace-repo repository
+        # cd ${{ github.workspace }}/$REPO_NAME
+        # git add .
+        # git commit -m "Updated workspaces.tfvars file"
+        # git push origin feat-$WORKSPACE_NAME
       shell: bash
