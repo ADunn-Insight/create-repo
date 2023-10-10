@@ -159,6 +159,7 @@ jobs:
   #     shell: bash
 
   create-workspace:
+    # needs: create-repo
     name: "Create new tfc-workspace"
     runs-on: ubuntu-latest
     steps:
@@ -180,8 +181,9 @@ jobs:
       run: |
         WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
-        # Read the abc-workspace object from template/workspace.tf
-        TEMPLATE_WORKSPACE_OBJECT=$(cat ${{ github.workspace }}/templates/template-workspaces.tfvars)
+        ls
+        # Read the abc-workspace object from template-workspace.tf
+        TEMPLATE_WORKSPACE_OBJECT=$(cat ${{ github.workspace }}/template-workspaces.tfvars)
 
         # Manipulate the values based on input parameters
         NEW_NAME="${{ github.event.inputs.workspaceName }}"
