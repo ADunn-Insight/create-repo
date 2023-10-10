@@ -196,9 +196,16 @@ jobs:
         sed -i "s|tags|$TAG_NAMES|g" ${{ github.workspace }}/template-workspaces.tfvars
 
         cat "${{ github.workspace }}/template-workspaces.tfvars"
+
+        UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
         
         # Read the existing workspaces.tfvars content
         cat workspaces.tfvars
-        pip install hcl2
+        
+        sed -i '/workspaces = {/ {
+          :a; N; $!ba; s/\(\n[[:space:]]*}\)/'"$UPDATED_OBJECT"'\n\1/
+        }' workspaces.tfvars
+
+        cat workspaces.tfvars
 
       shell: bash
