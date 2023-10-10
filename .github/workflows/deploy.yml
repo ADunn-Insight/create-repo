@@ -217,9 +217,6 @@ jobs:
         # Replace the original file with the updated one
         mv "${{ github.workspace }}//$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
 
-        # Display the updated workspaces.tfvars file
-        cat "${{ github.workspace }}/workspaces.tfvars"
-
 
         cat workspaces.tfvars
 
