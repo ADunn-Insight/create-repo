@@ -201,12 +201,12 @@ jobs:
             --arg NEW_TAG_NAMES "$NEW_TAG_NAMES" \
             --arg NEW_VARIABLE_SET_NAME "$NEW_VARIABLE_SET_NAME" \
             --arg NEW_PROJECT_NAME "$NEW_PROJECT_NAME" \
-            '.["$NEW_NAME"] | .name = $NEW_NAME | .key = $NEW_NAME | .tag_names = $NEW_TAG_NAMES | .variable_set_name = $NEW_VARIABLE_SET_NAME | .project_name = $NEW_PROJECT_NAME')
+            'to_entries | map(if .key == $NEW_NAME then . + {"value": {"name": $NEW_NAME, "key": $NEW_NAME, "tag_names": $NEW_TAG_NAMES, "variable_set_name": $NEW_VARIABLE_SET_NAME, "project_name": $NEW_PROJECT_NAME}} else . end) | from_entries')
 
         # Update workspaces.tfvars with the modified workspace object
         TFE_TFVARS_FILE="${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
         TFE_TFVARS_JSON=$(cat "$TFE_TFVARS_FILE" | jq .)
-        UPDATED_TFE_TFVARS_JSON=$(echo "$TFE_TFVARS_JSON" | jq --argjson MODIFIED_WORKSPACE_OBJECT "$MODIFIED_WORKSPACE_OBJECT" '.workspaces += $MODIFIED_WORKSPACE_OBJECT')
+        UPDATED_TFE_TFVARS_JSON=$(echo "$TFE_TFVARS_JSON" | jq --argjson MODIFIED_WORKSPACE_OBJECT "$MODIFIED_WORKSPACE_OBJECT" '.workspaces += [$MODIFIED_WORKSPACE_OBJECT]')
 
         # Write the updated JSON structure back to workspaces.tfvars
         echo "$UPDATED_TFE_TFVARS_JSON" > "$TFE_TFVARS_FILE"
