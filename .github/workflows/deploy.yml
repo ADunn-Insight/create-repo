@@ -187,6 +187,9 @@ jobs:
         PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
 
+        cd ${{ github.workspace }}/$REPO_NAME
+        git checkout feat-$WORKSPACE_NAME
+        
         sed -i "s|abc_workspace|$WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|abc_variable_set|$VARIABLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
