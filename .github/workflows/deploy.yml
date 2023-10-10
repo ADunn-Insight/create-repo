@@ -183,7 +183,7 @@ jobs:
       run: |
         WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
         VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
-        TAG_NAMES='${{ github.event.inputs.workspaceTagsName }}'
+        TAG_NAMES="${{ github.event.inputs.workspaceTagsName }}"
         PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
 
