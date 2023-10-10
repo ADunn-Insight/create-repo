@@ -192,7 +192,7 @@ jobs:
         sed -i 's|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i 's|[""]|$TAG_NAMES|g' ${{ github.workspace }}/template-workspaces.tfvars
 
-        echo cat ${{ github.workspace }}/template-workspaces.tfvars
+        cat "${{ github.workspace }}/template-workspaces.tfvars"
 
         # # Update workspaces.tfvars with the modified workspace object
         # TFE_TFVARS_FILE="${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
