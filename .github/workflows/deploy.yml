@@ -212,7 +212,7 @@ jobs:
           !inside_workspaces {
             print
           }
-        ' "${{ github.workspace }}/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
+        ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
         # Replace the original file with the updated one
         mv "${{ github.workspace }}//$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
