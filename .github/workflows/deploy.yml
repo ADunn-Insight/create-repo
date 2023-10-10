@@ -195,8 +195,6 @@ jobs:
         sed -i "s|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|tags|$TAG_NAMES|g" ${{ github.workspace }}/template-workspaces.tfvars
 
-        cat "${{ github.workspace }}/template-workspaces.tfvars"
-
         # Assuming that the updated object is stored in a temporary file
         UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
 
