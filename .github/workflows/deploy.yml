@@ -14,6 +14,18 @@ on:
       description:
         description: 'Repository Description'
         required: true
+      workspaceName:
+        description: 'TFC Workspace Name'
+        required: true
+      workspaceTagsName:
+        description: 'Workspace tags name'
+        required: true
+      workspaceVariableSetName:
+        description: 'Workspace Variable Set Name'
+        required: true
+      workspaceProjectName:
+        description: 'Workspace Project Name'
+        required: true
 jobs:
   create-repo:
     name: "Deploy New Repositories"
@@ -175,7 +187,7 @@ jobs:
         NEW_NAME="${{ github.event.inputs.workspaceName }}"
         NEW_TAG_NAMES="${{ github.event.inputs.workspaceTagsName }}"
         NEW_VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
-        NEW_PROJECT_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
+        NEW_PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
 
         # Rename the abc-workspace object with the new workspace name
         MODIFIED_WORKSPACE_OBJECT=$(echo "$TEMPLATE_WORKSPACE_OBJECT" | jq --arg NEW_NAME "$NEW_NAME" \
