@@ -194,4 +194,3 @@ jobs:
 
         cat "${{ github.workspace }}/template-workspaces.tfvars"
       shell: bash
-S
