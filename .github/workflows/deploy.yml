@@ -192,22 +192,7 @@ jobs:
         sed -i 's|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i 's|[""]|$TAG_NAMES|g' ${{ github.workspace }}/template-workspaces.tfvars
 
-        # # Read the abc-workspace object from template-workspace.tf
-        # TEMPLATE_WORKSPACE_OBJECT=$(echo cat ${{ github.workspace }}/template-workspaces.tfvars)
-
-        # # Manipulate the values based on input parameters
-        # NEW_NAME="${{ github.event.inputs.workspaceName }}"
-        # NEW_TAG_NAMES='${{ github.event.inputs.workspaceTagsName }}'
-        # NEW_VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
-        # NEW_PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
-
-        # # Rename the abc-workspace object with the new workspace name
-        # MODIFIED_WORKSPACE_OBJECT=$(echo "$TEMPLATE_WORKSPACE_OBJECT" | jq --arg NEW_NAME "$NEW_NAME" \
-        #     --arg NEW_KEY "$NEW_NAME" \
-        #     --arg NEW_TAG_NAMES "$NEW_TAG_NAMES" \
-        #     --arg NEW_VARIABLE_SET_NAME "$NEW_VARIABLE_SET_NAME" \
-        #     --arg NEW_PROJECT_NAME "$NEW_PROJECT_NAME" \
-        #     'to_entries | map(if .key == $NEW_NAME then . + {"value": {"name": $NEW_NAME, "key": $NEW_NAME, "tag_names": $NEW_TAG_NAMES, "variable_set_name": $NEW_VARIABLE_SET_NAME, "project_name": $NEW_PROJECT_NAME}} else . end) | from_entries')
+        echo cat ${{ github.workspace }}/template-workspaces.tfvars
 
         # # Update workspaces.tfvars with the modified workspace object
         # TFE_TFVARS_FILE="${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
