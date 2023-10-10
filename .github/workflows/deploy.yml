@@ -183,14 +183,14 @@ jobs:
       run: |
         WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
         VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
-        TAG_NAMES="${{ github.event.inputs.workspaceTagsName }}"
+        #TAG_NAMES="${{ github.event.inputs.workspaceTagsName }}"
         PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
 
         sed -i "s|abc_workspace|$WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|abc_variable_set|$VARIABLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|[]|$TAG_NAMES|g" ${{ github.workspace }}/template-workspaces.tfvars
+        #sed -i "s|[]|$TAG_NAMES|g" ${{ github.workspace }}/template-workspaces.tfvars
 
         cat "${{ github.workspace }}/template-workspaces.tfvars"
       shell: bash
