@@ -191,7 +191,7 @@ jobs:
 
         # Manipulate the values based on input parameters
         NEW_NAME="${{ github.event.inputs.workspaceName }}"
-        NEW_TAG_NAMES="${{ github.event.inputs.workspaceTagsName }}"
+        NEW_TAG_NAMES='${{ github.event.inputs.workspaceTagsName }}'
         NEW_VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
         NEW_PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
 
