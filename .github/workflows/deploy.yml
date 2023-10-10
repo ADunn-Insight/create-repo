@@ -183,7 +183,9 @@ jobs:
       run: |
         WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
-        ls
+
+        sed -i "1s/abc-workspace/$WORKSPACE_NAME/" ${{ github.workspace }}/template-workspaces.tfvars
+
         # Read the abc-workspace object from template-workspace.tf
         TEMPLATE_WORKSPACE_OBJECT=$(cat ${{ github.workspace }}/template-workspaces.tfvars)
 
@@ -199,7 +201,7 @@ jobs:
             --arg NEW_TAG_NAMES "$NEW_TAG_NAMES" \
             --arg NEW_VARIABLE_SET_NAME "$NEW_VARIABLE_SET_NAME" \
             --arg NEW_PROJECT_NAME "$NEW_PROJECT_NAME" \
-            '. + {($NEW_NAME): .abc-workspace | .name = $NEW_NAME | .key = $NEW_NAME | .tag_names = $NEW_TAG_NAMES | .variable_set_name = $NEW_VARIABLE_SET_NAME | .project_name = $NEW_PROJECT_NAME} | del(.["abc-workspace"])}')
+            '.$NEW_NAME | .name = $NEW_NAME | .key = $NEW_NAME | .tag_names = $NEW_TAG_NAMES | .variable_set_name = $NEW_VARIABLE_SET_NAME | .project_name = $NEW_PROJECT_NAME')
 
         # Update workspaces.tfvars with the modified workspace object
         TFE_TFVARS_FILE="${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
