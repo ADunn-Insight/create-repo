@@ -189,7 +189,7 @@ jobs:
 
         cd ${{ github.workspace }}/$REPO_NAME
         git checkout feat-$WORKSPACE_NAME
-        
+
         sed -i "s|abc_workspace|$WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|abc_variable_set|$VARIABLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
@@ -199,20 +199,6 @@ jobs:
         
         # Read the existing workspaces.tfvars content
         cat workspaces.tfvars
-
-        # Read the existing workspaces.tfvars content and parse it to a data structure
-        workspaces_data=$(cat workspaces.tfvars | jq -r .)
-
-        # Read the contents of test.tfvars
-        test_data=$(cat "${{ github.workspace }}/template-workspaces.tfvars" | jq -r .)
-
-        # Merge test_data into workspaces_data
-        merged_data=$(echo "$workspaces_data" "$test_data" | jq -s '.[0].workspaces += .[1]')
-
-        # Write the updated data back to workspaces.tfvars
-        echo "$merged_data" > workspaces.tfvars
-
-        # Display the updated workspaces.tfvars content
-        cat workspaces.tfvars
+        pip install hcl2
 
       shell: bash
