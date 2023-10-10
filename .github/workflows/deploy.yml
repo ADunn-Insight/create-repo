@@ -197,16 +197,20 @@ jobs:
 
         cat "${{ github.workspace }}/template-workspaces.tfvars"
 
+        # Assuming that the updated object is stored in a temporary file
         UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
-        
-        # Read the existing workspaces.tfvars content
-        cat workspaces.tfvars
-        
+
+        # Create a temporary file to store the updated workspaces.tfvars
+        TMP_FILE="workspaces.tfvars.tmp"
+
         # Use awk to insert the updated object inside the workspaces map
-        awk '/workspaces = {/ {found=1} found && /}$/ {print "'"$UPDATED_OBJECT"'"; found=0} 1' "${{ github.workspace }}/workspaces.tfvars" > "${{ github.workspace }}/workspaces.tfvars.tmp"
+        awk 'BEGIN { found = 0 }
+        /workspaces = {/ { found = 1; print; next }
+        found && /}/ { found = 0; print "  " ENVIRON["UPDATED_OBJECT"] "\n}" }
+        { if (!found) print }' "${{ github.workspace }}/workspaces.tfvars" > "$TMP_FILE"
 
         # Replace the original file with the updated one
-        mv "${{ github.workspace }}/workspaces.tfvars.tmp" "${{ github.workspace }}/workspaces.tfvars"
+        mv "$TMP_FILE" workspaces.tfvars
 
         cat workspaces.tfvars
 
