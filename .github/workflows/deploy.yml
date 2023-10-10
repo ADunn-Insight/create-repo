@@ -190,7 +190,7 @@ jobs:
         sed -i 's|abc_workspace|$WORKSPACE_NAME|g' ${{ github.workspace }}/template-workspaces.tfvars
         sed -i 's|abc_variable_set|$VARIABLE_SET_NAME|g' ${{ github.workspace }}/template-workspaces.tfvars
         sed -i 's|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|[""]|$TAG_NAMES|g' ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i 's|[""]|$TAG_NAMES|g' ${{ github.workspace }}/template-workspaces.tfvars
 
         # # Read the abc-workspace object from template-workspace.tf
         # TEMPLATE_WORKSPACE_OBJECT=$(echo cat ${{ github.workspace }}/template-workspaces.tfvars)
