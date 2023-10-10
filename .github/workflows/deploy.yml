@@ -40,7 +40,6 @@ jobs:
           
   #       response=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: token $GH_PAT" \
   #         "https://api.github.com/repos/$ORG_NAME/$REPO_NAME")
-  #       echo "$response"
   #       if [ "$response" == "200" ]; then
   #         echo "REPO_EXISTS=true" >> "$GITHUB_OUTPUT"
   #       else
@@ -165,7 +164,7 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
-      
+
     - name: Clone the worskspace repo
       run: |
         GH_PAT="${{ secrets.GH_PAT }}"
@@ -197,7 +196,7 @@ jobs:
         # Rename the abc-workspace object with the new workspace name
         MODIFIED_WORKSPACE_OBJECT=$(echo "$TEMPLATE_WORKSPACE_OBJECT" | jq --arg NEW_NAME "$NEW_NAME" \
             --arg NEW_KEY "$NEW_NAME" \
-            --argjson NEW_TAG_NAMES "$NEW_TAG_NAMES" \
+            --arg NEW_TAG_NAMES "$NEW_TAG_NAMES" \
             --arg NEW_VARIABLE_SET_NAME "$NEW_VARIABLE_SET_NAME" \
             --arg NEW_PROJECT_NAME "$NEW_PROJECT_NAME" \
             '. + {($NEW_NAME): .abc-workspace | .name = $NEW_NAME | .key = $NEW_NAME | .tag_names = $NEW_TAG_NAMES | .variable_set_name = $NEW_VARIABLE_SET_NAME | .project_name = $NEW_PROJECT_NAME} | del(.["abc-workspace"])')
