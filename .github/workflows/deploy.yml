@@ -202,7 +202,11 @@ jobs:
         # Read the existing workspaces.tfvars content
         cat workspaces.tfvars
         
-        sed -i '/workspaces = {/,/}/s/}$/\n'"$UPDATED_OBJECT"'\n}/' workspaces.tfvars
+        # Use awk to insert the updated object inside the workspaces map
+        awk '/workspaces = {/ {found=1} found && /}$/ {print "'"$UPDATED_OBJECT"'"; found=0} 1' "${{ github.workspace }}/workspaces.tfvars" > "${{ github.workspace }}/workspaces.tfvars.tmp"
+
+        # Replace the original file with the updated one
+        mv "${{ github.workspace }}/workspaces.tfvars.tmp" "${{ github.workspace }}/workspaces.tfvars"
 
         cat workspaces.tfvars
 
