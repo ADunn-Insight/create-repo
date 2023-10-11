@@ -194,38 +194,9 @@ jobs:
         sed -i "s|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|tags|$TAG_NAMES|g" ${{ github.workspace }}/template-workspaces.tfvars
 
-        # Assuming that the updated object is stored in a temporary file
         UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
-
-        # sed -i '/workspaces = {/ r "UPDATED_OBJECT"' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
-        # sed -i '/workspaces = {/ {
-        #   N
-        #   s/}\n}/, \n'"$UPDATED_OBJECT"'\n}/
-        # }' workspaces.tfvars
-        # Use awk to insert the updated object inside the workspaces map
-        # awk '
-        #   /workspaces = {/ {
-        #     inside_workspaces = 1
-        #     print
-        #     next
-        #   }
-        #   inside_workspaces && /}/ {
-        #     inside_workspaces = 0
-        #     print "  " ENVIRON["UPDATED_OBJECT"]
-        #   }
-        #   { if (!inside_workspaces) print }
-        # ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
-
-        # cat workspaces.tfvars | grep -v -E '^\s*}'
-        # echo "$UPDATED_OBJECT" >> workspaces.tfvars
-        # echo "}" >> workspaces.tfvars
-        # } > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
-
-        # Replace the original file with the updated one
-        #mv "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
         
-        #sed -i '$ s/}//' workspaces.tfvars
-        sed -i '/workspaces = {/!b;n;:a;$!N;/\n}/!ba;s/\n}//' workspaces.tfvars
+        sed -i '/workspaces = {/!b;n;:a;$!N;/\n}/!ba;s/}//' workspaces.tfvars
         echo "$UPDATED_OBJECT" >> workspaces.tfvars
         echo "}" >> workspaces.tfvars
         terraform fmt --recursive
