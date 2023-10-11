@@ -217,8 +217,8 @@ jobs:
         # ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
         cat workspaces.tfvars | grep -v -E '^\s*}'
-        #   echo "$UPDATED_OBJECT" 
-        #   echo "}" 
+        echo "$UPDATED_OBJECT" >> workspaces.tfvars
+        echo "}" >> workspaces.tfvars
         # } > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
         # Replace the original file with the updated one
