@@ -225,11 +225,10 @@ jobs:
         #mv "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
         
         #sed -i '$ s/}//' workspaces.tfvars
-        sed -i '/workspaces = {/,/}$/s/}$/'"${UPDATED_OBJECT}"'\n  }/' workspaces.tfvars
-        #echo "$UPDATED_OBJECT" >> workspaces.tfvars
-        #echo "}" >> workspaces.tfvars
+        sed -i '/workspaces = {/!b;n;:a;$!N;/\n}/!ba;s/\n}//' workspaces.tfvars
+        echo "$UPDATED_OBJECT" >> workspaces.tfvars
+        echo "}" >> workspaces.tfvars
         terraform fmt --recursive
-
 
         cat workspaces.tfvars
 
