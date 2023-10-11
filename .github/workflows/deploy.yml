@@ -204,6 +204,8 @@ jobs:
       shell: bash
     
     - name:  Create pull request from feature branch to development branch
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PAT }}
       run: |
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
         WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
