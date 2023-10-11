@@ -197,7 +197,7 @@ jobs:
         # Assuming that the updated object is stored in a temporary file
         UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
 
-        sed -i '/workspaces = {/ r "${{ github.workspace }}/template-workspaces.tfvars"' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
+        sed -i '/workspaces = {/ r "UPDATED_OBJECT"' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
 
         # Use awk to insert the updated object inside the workspaces map
         # awk '
