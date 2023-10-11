@@ -220,7 +220,7 @@ jobs:
           cat "${{ github.workspace }/$REPO_NAME/workspaces.tfvars" | grep -v -E '^\s*}' # Remove the closing brace of workspaces
           echo "$UPDATED_OBJECT" # Add the updated object
           echo "}" # Add the closing brace of workspaces
-        } > "${{ github.workspace }}/workspaces.tfvars.tmp"
+        } > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
         Replace the original file with the updated one
         mv "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
