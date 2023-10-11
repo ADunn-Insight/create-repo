@@ -201,6 +201,13 @@ jobs:
         echo "}" >> workspaces.tfvars
         terraform fmt --recursive
 
-        cat workspaces.tfvars
-
+        cat workspaces.
       shell: bash
+    
+    - name:  Create pull request from feature branch to development branch
+      run: |
+        REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+        WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
+
+        cd ${{ github.workspace }}/$REPO_NAME
+        gh pr create --base development --head feat-$WORKSPACE_NAME --title "Feature to Development" --body "Automatically created pull request"
