@@ -196,9 +196,9 @@ jobs:
 
         UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
         
-        sed -i '/workspaces = {/!b;n;:a;$!N;/\n}/!ba;s/\n}//' workspaces.tfvars
-        awk '/}/ && !f {print ""; f=1} 1' workspaces.tfvars > workspaces.tfvars.tmp
+        awk '/workspaces = {/!b;n;:a;$!N;/\n}/!ba;s/\n}// && !f {print ""; f=1} 1' workspaces.tfvars > workspaces.tfvars.tmp
         mv workspaces.tfvars.tmp workspaces.tfvars
+        sed -i '/workspaces = {/!b;n;:a;$!N;/\n}/!ba;s/\n}//' workspaces.tfvars
         echo "$UPDATED_OBJECT" >> workspace.tfvars
         echo "}" >> workspaces.tfvars
         terraform fmt --recursive
