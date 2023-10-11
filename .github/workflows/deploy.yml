@@ -198,7 +198,7 @@ jobs:
         
         sed -i '/workspaces = {/!b;:a;$!N;/\n}/!ba' workspaces.tfvars
         echo "$UPDATED_OBJECT" >> workspace.tfvars
-        echo "}" >> workspaces.tfvars
+        # echo "}" >> workspaces.tfvars
         terraform fmt --recursive
 
         cat workspaces.tfvars
