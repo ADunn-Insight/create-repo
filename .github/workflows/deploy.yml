@@ -200,8 +200,7 @@ jobs:
         echo "$UPDATED_OBJECT" >> workspaces.tfvars
         echo "}" >> workspaces.tfvars
         terraform fmt --recursive
-
-        cat workspaces.
+        cat workspaces.tfvars
       shell: bash
     
     - name:  Create pull request from feature branch to development branch
