@@ -203,21 +203,27 @@ jobs:
         #   s/}\n}/, \n'"$UPDATED_OBJECT"'\n}/
         # }' workspaces.tfvars
         # Use awk to insert the updated object inside the workspaces map
-        awk '
-          /workspaces = {/ {
-            inside_workspaces = 1
-            print
-            next
-          }
-          inside_workspaces && /}/ {
-            inside_workspaces = 0
-            print "  " ENVIRON["UPDATED_OBJECT"]
-          }
-          { if (!inside_workspaces) print }
-        ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
+        # awk '
+        #   /workspaces = {/ {
+        #     inside_workspaces = 1
+        #     print
+        #     next
+        #   }
+        #   inside_workspaces && /}/ {
+        #     inside_workspaces = 0
+        #     print "  " ENVIRON["UPDATED_OBJECT"]
+        #   }
+        #   { if (!inside_workspaces) print }
+        # ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
+
+        {
+          cat "${{ github.workspace }/$REPO_NAME/workspaces.tfvars" | grep -v -E '^\s*}' # Remove the closing brace of workspaces
+          echo "$UPDATED_OBJECT" # Add the updated object
+          echo "}" # Add the closing brace of workspaces
+        } > "${{ github.workspace }}/workspaces.tfvars.tmp"
 
         Replace the original file with the updated one
-        mv "${{ github.workspace }}//$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
+        mv "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
 
 
         cat workspaces.tfvars
