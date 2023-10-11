@@ -198,28 +198,26 @@ jobs:
         UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
 
         # sed -i '/workspaces = {/ r "UPDATED_OBJECT"' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
-        sed -i '/workspaces = {/ {
-          N
-          s/}\n}/, \n'"$UPDATED_OBJECT"'\n}/
-        }' workspaces.tfvars
+        # sed -i '/workspaces = {/ {
+        #   N
+        #   s/}\n}/, \n'"$UPDATED_OBJECT"'\n}/
+        # }' workspaces.tfvars
         # Use awk to insert the updated object inside the workspaces map
-        # awk '
-        #   /workspaces = {/ {
-        #     inside_workspaces = 1
-        #     print
-        #     next
-        #   }
-        #   inside_workspaces && /}/ {
-        #     print "  " ENVIRON["UPDATED_OBJECT"]
-        #     inside_workspaces = 0
-        #   }
-        #   inside_workspaces {
-        #     print
-        #   }
-        # ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
+        awk '
+          /workspaces = {/ {
+            inside_workspaces = 1
+            print
+            next
+          }
+          inside_workspaces && /}/ {
+            inside_workspaces = 0
+            print "  " ENVIRON["UPDATED_OBJECT"]
+          }
+          { if (!inside_workspaces) print }
+        ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
-        # Replace the original file with the updated one
-        # mv "${{ github.workspace }}//$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
+        Replace the original file with the updated one
+        mv "${{ github.workspace }}//$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
 
 
         cat workspaces.tfvars
