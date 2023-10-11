@@ -9,4 +9,3 @@ abc_workspace = {
     variable_set_name = "abc_variable_set"
     project_name      = "abc_project_name"
  }
-}
