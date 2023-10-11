@@ -217,12 +217,12 @@ jobs:
         # ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
         {
-          cat "${{ github.workspace }/$REPO_NAME/workspaces.tfvars" | grep -v -E '^\s*}' # Remove the closing brace of workspaces
-          echo "$UPDATED_OBJECT" # Add the updated object
-          echo "}" # Add the closing brace of workspaces
+          cat "${{ github.workspace }/$REPO_NAME/workspaces.tfvars" | grep -v -E '^\s*}'
+          echo "$UPDATED_OBJECT" 
+          echo "}" 
         } > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
-        Replace the original file with the updated one
+        # Replace the original file with the updated one
         mv "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
 
 
