@@ -216,13 +216,17 @@ jobs:
         #   { if (!inside_workspaces) print }
         # ' "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars" > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
-        cat workspaces.tfvars | grep -v -E '^\s*}'
-        echo "$UPDATED_OBJECT" >> workspaces.tfvars
-        echo "}" >> workspaces.tfvars
+        # cat workspaces.tfvars | grep -v -E '^\s*}'
+        # echo "$UPDATED_OBJECT" >> workspaces.tfvars
+        # echo "}" >> workspaces.tfvars
         # } > "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp"
 
         # Replace the original file with the updated one
         #mv "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars.tmp" "${{ github.workspace }}/$REPO_NAME/workspaces.tfvars"
+        
+        sed -i '$ s/}//' workspaces.tfvars
+        echo "$UPDATED_OBJECT" >> workspaces.tfvars
+        echo "}" >> workspaces.tfvars
 
 
         cat workspaces.tfvars
