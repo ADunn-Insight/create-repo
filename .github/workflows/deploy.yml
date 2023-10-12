@@ -33,9 +33,7 @@ jobs:
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
 
-        response=echo$(gh api repos/$ORG_NAME/$REPO_NAME)
-
-        echo "$response"
+        response=$(gh api repos/$ORG_NAME/$REPO_NAME)
 
         if [ "$response" == $REPO_NAME ]; then
           echo "REPO_EXISTS=true" >> "$GITHUB_OUTPUT"
