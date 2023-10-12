@@ -62,8 +62,11 @@ jobs:
         GH_TOKEN: ${{ steps.generate_token.outputs.token }}
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
-        gh api --method PUT \
-          /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
+        curl -X PUT -H "Authorization: token $GH_TOKEN" \
+        "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME" -d '{
+        "permission": "triage"
+        }'
