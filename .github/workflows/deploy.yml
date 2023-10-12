@@ -54,3 +54,4 @@ jobs:
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
 
         gh repo create chvi-devops/$REPO_NAME --public --include-all-branches --template=chvi-devops/template-repo 
+        gh repo edit chvi-devops/$REPO_NAME --description=$DESCRIPTION
