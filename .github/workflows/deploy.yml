@@ -38,6 +38,8 @@ jobs:
                       -H "X-GitHub-Api-Version: 2022-11-28" \
                       repos/$ORG_NAME/$REPO_NAME --jq '. | .status')
 
+        echo "$response"
+
         if [ "$response" == "200" ]; then
           echo "REPO_EXISTS=true" >> "$GITHUB_OUTPUT"
         else
