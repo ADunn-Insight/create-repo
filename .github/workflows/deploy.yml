@@ -18,16 +18,9 @@ jobs:
     name: "Deploy New Repositories"
     runs-on: ubuntu-latest
     steps:
-    - name: Generate a token
-      id: generate_token
-      uses: actions/create-github-app-token@v1
-      with:
-        app-id: ${{ secrets.APP_ID }}
-        private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
     - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
       env:
-        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        GH_PAT: ${{ secrets.GH_PAT }}
       run: |
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
@@ -47,7 +40,7 @@ jobs:
 
     - name: Create Repository
       env:
-        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        GH_PAT: ${{ secrets.GH_PAT }}
       run: |
         DESCRIPTION="${{ github.event.inputs.description }}"
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
@@ -58,13 +51,51 @@ jobs:
           --include-all-branches --template=$ORG_NAME/template-repo 
 
     - name: Add TeamA as a Reviewer Team
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
-        GITHUB_TOKEN="${{ steps.generate_token.outputs.token }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
-        curl -X PUT -H "Authorization: token $GITHUB_TOKEN" \
-        "https://api.github.com/orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME" -d '{
-        "permission": "triage"
-        }'
+        gh api --method PUT \
+          /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
+    
+    - name: Configure Branch Protection
+      run: |
+        REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+        GH_PAT="${{ secrets.GH_PAT }}"
+        
+        # Enable branch protection for Main branch
+        curl -X PUT -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/main/protection" -d '{
+            "required_status_checks": null,
+            "enforce_admins": null,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": false,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": 1
+            },
+            "restrictions": null,
+            "required_linear_history": false,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }'
+        
+        # Enable branch protection for Development branch
+        curl -X PUT -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/development/protection" -d '{
+            "required_status_checks": null,
+            "enforce_admins": null,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": false,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": 1
+            },
+            "restrictions": null,
+            "required_linear_history": false,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }'
+      shell: bash
