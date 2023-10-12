@@ -53,4 +53,5 @@ jobs:
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
 
-        gh repo create $ORG_NAME/$REPO_NAME --description=$DESCRIPTION --include-all-branches --template=$ORG_NAME/template-repo 
+        gh repo create $ORG_NAME/$REPO_NAME --public --description=$DESCRIPTION \
+           --include-all-branches --template=$ORG_NAME/template-repo 
