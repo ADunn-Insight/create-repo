@@ -33,21 +33,20 @@ jobs:
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
 
-        response=$(gh api --method GET repos/$ORG_NAME/$REPO_NAME --jq '. | .Status')
-
-        echo $response
-        if [ "$response" == $REPO_NAME ]; then
-          echo "REPO_EXISTS=true" >> "$GITHUB_OUTPUT"
+        if gh repo view $ORG_NAME/$REPO_NAME 2>/dev/null; then
+          echo "Repository $ORG_NAME/$ORG_NAME exists."
+          exit 1
         else
-          echo "REPO_EXISTS=false" >> "$GITHUB_OUTPUT"
+          echo "Repository $owner/$repo does not exist."
+          # You can set an output variable or perform other actions here.
         fi
       shell: bash
 
-    - name: Stop Workflow If Repository Exist
-      if: steps.check_repo.outputs.REPO_EXISTS == 'true'
-      run: |
-        echo "The repository already exist. Stopping the workflow."
-        exit 1
+    # - name: Stop Workflow If Repository Exist
+    #   if: steps.check_repo.outputs.REPO_EXISTS == 'true'
+    #   run: |
+    #     echo "The repository already exist. Stopping the workflow."
+    #     exit 1
 
     - name: Checkout code
       uses: actions/checkout@v2
