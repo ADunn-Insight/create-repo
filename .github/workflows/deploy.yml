@@ -25,7 +25,7 @@ jobs:
         app-id: ${{ secrets.APP_ID }}
         private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
-    - name: Check if Repository Already Exists
+    - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
       env:
         GH_TOKEN: ${{ steps.generate_token.outputs.token }}
       run: |
@@ -53,4 +53,4 @@ jobs:
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         TEAM_NAME="${{ env.TEAM_NAME }}"
 
-        gh repo create $ORG_NAME/$REPO_NAME --private --team=$TEAM_NAME --source=./templates --remote=upstream
+        gh repo create $ORG_NAME/$REPO_NAME --private --team=$TEAM_NAME --template=$ORG_NAME/template-repo
