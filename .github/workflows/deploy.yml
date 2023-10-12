@@ -20,7 +20,7 @@ jobs:
     steps:
     - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
       env:
-        GH_PAT: ${{ secrets.GH_PAT }}
+        GH_TOKEN: ${{ secrets.GH_PAT }}
       run: |
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
@@ -40,7 +40,7 @@ jobs:
 
     - name: Create Repository
       env:
-        GH_PAT: ${{ secrets.GH_PAT }}
+        GH_TOKEN: ${{ secrets.GH_PAT }}
       run: |
         DESCRIPTION="${{ github.event.inputs.description }}"
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
@@ -52,7 +52,7 @@ jobs:
 
     - name: Add TeamA as a Reviewer Team
       env:
-        GH_PAT: ${{ secrets.GH_PAT }}
+        GH_TOKEN: ${{ secrets.GH_PAT }}
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
