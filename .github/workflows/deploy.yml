@@ -60,7 +60,7 @@ jobs:
     - name: Add TeamA as a Reviewer Team
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
-        GITHUB_TOKEN: "${{ steps.generate_token.outputs.token }}"
+        GITHUB_TOKEN="${{ steps.generate_token.outputs.token }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
