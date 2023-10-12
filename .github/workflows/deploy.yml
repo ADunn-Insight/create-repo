@@ -36,7 +36,7 @@ jobs:
         if gh api repos/$ORG_NAME/$REPO_NAME 2>/dev/null; then
           echo "Repository $ORG_NAME/$REPO_NAME exists."
           exit 1
-          
+        fi
       shell: bash
 
     - name: Checkout code
