@@ -33,7 +33,7 @@ jobs:
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
 
-        response=$(gh api --method GET -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" repos/$ORG_NAME/$REPO_NAME 2>&1 |  grep -o "HTTP/1.1 \d\+")
+        response=$(gh api --silent -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" repos/$ORG_NAME/$REPO_NAME 2>&1 |  grep -o "HTTP/1.1 \d\+")
 
         echo "$response"
 
