@@ -51,6 +51,6 @@ jobs:
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        TEAM_NAME="${ env.TEAM_NAME }"
+        TEAM_NAME="${{ env.TEAM_NAME }}"
 
         gh repo create $ORG_NAME/$REPO_NAME --private --team=$TEAM_NAME --source=./templates --remote=upstream
