@@ -33,10 +33,7 @@ jobs:
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
 
-        response=$(gh api --method GET \
-                      -H "Accept: application/vnd.github+json" \
-                      -H "X-GitHub-Api-Version: 2022-11-28" \
-                      repos/$ORG_NAME/$REPO_NAME --jq '. | .status')
+        response=$(gh api --method GET repos/$ORG_NAME/$REPO_NAME --jq '. | .status')
 
         echo "$response"
 
