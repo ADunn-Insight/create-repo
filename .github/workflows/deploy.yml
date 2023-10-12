@@ -53,4 +53,4 @@ jobs:
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         TEAM_NAME="${{ env.TEAM_NAME }}"
 
-        gh repo create $ORG_NAME/$REPO_NAME --private --team=$TEAM_NAME --template=$ORG_NAME/template-repo
+        gh repo create $ORG_NAME/$REPO_NAME --private --template=$ORG_NAME/template-repo
