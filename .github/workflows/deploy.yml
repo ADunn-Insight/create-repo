@@ -33,7 +33,7 @@ jobs:
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
 
-        response=echo$(gh api repos/$ORG_NAME/$REPO_NAME --jq '.[].name')
+        response=echo$(gh api repos/$ORG_NAME/$REPO_NAME)
 
         echo "$response"
 
