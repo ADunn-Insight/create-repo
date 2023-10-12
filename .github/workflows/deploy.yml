@@ -45,17 +45,17 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Create Repository
-      env:
-        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
-      run: |
-        DESCRIPTION="${{ github.event.inputs.description }}"
-        REPO_NAME="${{ env.REPOSITORY_NAME }}"
-        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        TEAM_NAME="${{ env.TEAM_NAME }}"
+    # - name: Create Repository
+    #   env:
+    #     GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+    #   run: |
+    #     DESCRIPTION="${{ github.event.inputs.description }}"
+    #     REPO_NAME="${{ env.REPOSITORY_NAME }}"
+    #     ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+    #     TEAM_NAME="${{ env.TEAM_NAME }}"
 
-        gh repo create $ORG_NAME/$REPO_NAME --public --description "$DESCRIPTION" \
-          --include-all-branches --template=$ORG_NAME/template-repo 
+    #     gh repo create $ORG_NAME/$REPO_NAME --public --description "$DESCRIPTION" \
+    #       --include-all-branches --template=$ORG_NAME/template-repo 
 
     - name: Add TeamA as a Reviewer Team
       env:
