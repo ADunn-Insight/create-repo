@@ -26,12 +26,13 @@ jobs:
         private-key: ${{ secrets.APP_PRIVATE_KEY }}
 
     - name: Check if Repository Already Exists
-      id: check_repo
       env:
         GH_TOKEN: ${{ steps.generate_token.outputs.token }}
       run: |
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+
+        echo "REPOSITORY_NAME=$REPO_NAME" >> "$GITHUB_ENV"
 
         if gh api repos/$ORG_NAME/$REPO_NAME --silent 2>/dev/null; then
           echo "Repository $ORG_NAME/$REPO_NAME exists."
@@ -43,3 +44,13 @@ jobs:
 
     - name: Checkout code
       uses: actions/checkout@v2
+
+    - name: Create Repository
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+        REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+        TEAM_NAME="${ env.TEAM_NAME }"
+
+        gh repo create $ORG_NAME/$REPO_NAME --private --team=$TEAM_NAME --source=./templates --remote=upstream
