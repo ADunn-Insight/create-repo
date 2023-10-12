@@ -66,4 +66,4 @@ jobs:
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
         gh api --method PUT \
-          /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/chvi-devops-automation-app[bot]/$REPO_NAME -f permission='triage' 
+          /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
