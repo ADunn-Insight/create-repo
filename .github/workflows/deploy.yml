@@ -35,6 +35,7 @@ jobs:
 
         response=$(gh api repos/$ORG_NAME/$REPO_NAME)
 
+        echo $response
         if [ "$response" == $REPO_NAME ]; then
           echo "REPO_EXISTS=true" >> "$GITHUB_OUTPUT"
         else
