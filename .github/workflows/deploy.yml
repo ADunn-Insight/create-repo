@@ -33,7 +33,7 @@ jobs:
         GITHUB_TOKEN="${{ steps.generate_token.outputs.token }}"
 
         echo "REPOSITORY_NAME=$REPO_NAME" >> "$GITHUB_ENV"
-        echo "GITHUB_TOKEN=$GITHUB_TOKEN" >> "$GITHUB_ENV"
+        echo "GH_TOKEN=$GITHUB_TOKEN" >> "$GITHUB_ENV"
 
         response=$(gh api --method GET \
                       -H "Accept: application/vnd.github+json" \
