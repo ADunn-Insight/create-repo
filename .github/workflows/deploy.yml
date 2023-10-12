@@ -55,4 +55,15 @@ jobs:
         TEAM_NAME="${{ env.TEAM_NAME }}"
 
         gh repo create $ORG_NAME/$REPO_NAME --public --description "$DESCRIPTION" \
-          --team $TEAM_NAME --include-all-branches --template=$ORG_NAME/template-repo 
+          --include-all-branches --template=$ORG_NAME/template-repo 
+
+    - name: Add TeamA as a Reviewer Team
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+      run: |
+        REPO_NAME="${{ env.REPOSITORY_NAME }}"
+        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+        TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
+
+        gh api --method PUT \
+          /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
