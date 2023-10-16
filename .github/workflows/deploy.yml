@@ -131,15 +131,15 @@ jobs:
         TFC_WORKSPACE_PROJECT_NAME="${{ env.TFC_WORKSPACE_PROJECT_NAME }}"
         TFC_WORKSPACE_TAGS_NAME='${{ env.TFC_WORKSPACE_TAGS_NAME }}'
 
-        sed -i "s|abc_workspace|$TFC_WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|abc_variable_set|$TFC_WORKSPACE_VARAIBLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|abc_project_name|$TFC_WORKSPACE_PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|tags|$TFC_WORKSPACE_TAGS_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s|sample_workspace|$TFC_WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s|sample_variable_set|$TFC_WORKSPACE_VARAIBLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s|sample_project_name|$TFC_WORKSPACE_PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s|sample_tags|$TFC_WORKSPACE_TAGS_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
 
         UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
         cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
         
-        sed -i '$ s|}||g' workspaces.tfvars
+        sed -i '$ s|}||' workspaces.tfvars
         echo "$UPDATED_OBJECT" >> workspaces.tfvars
         echo "}" >> workspaces.tfvars
         terraform fmt --recursive

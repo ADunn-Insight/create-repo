@@ -1,11 +1,11 @@
-abc_workspace = {
-    name              = "abc_workspace"
-    key               = "abc_workspace"
+sample_workspace = {
+    name              = "sample_workspace"
+    key               = "sample_workspace"
     auto_apply        = true
     execution_mode    = "remote"
-    tag_names         = tags
+    tag_names         = sample_tags
     terraform_version = "1.3.9"
     working_directory = ""
-    variable_set_name = "abc_variable_set"
-    project_name      = "abc_project_name"
+    variable_set_name = "sample_variable_set"
+    project_name      = "sample_project_name"
  }
