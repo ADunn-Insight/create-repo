@@ -1,5 +1,5 @@
-REPO_NAME: demo-repo-2
-REPO_DESCRIPTION: for demo purpose 2
+REPO_NAME: demo-repo-1
+REPO_DESCRIPTION: for demo purpose 1
 TFC_WORKSPACE_NAME: workspace-1
 TFC_WORKSPACE_TAGS_NAME: ["tag1"]
 TFC_WORKSPACE_VARAIBLE_SET_NAME: Environment Variables 1
