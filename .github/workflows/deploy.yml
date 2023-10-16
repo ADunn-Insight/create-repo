@@ -3,6 +3,7 @@ name: Create and Configure GitHub Repo
 env:
   ORGANIZATION_NAME: 'chvi-devops'
   TEAM_NAME: 'TeamA'
+  WORKSPACE_REPO_NAME: 'workspace-repo'
   GH_TOKEN: ${{ secrets.GH_PAT }}
 
 on:
@@ -14,14 +15,25 @@ on:
       description:
         description: 'Repository Description'
         required: true
+      workspaceName:
+        description: 'TFC Workspace Name'
+        required: true
+      workspaceTagsName:
+        description: 'Workspace tags name'
+        required: true
+      workspaceVariableSetName:
+        description: 'Workspace Variable Set Name'
+        required: true
+      workspaceProjectName:
+        description: 'Workspace Project Name'
+        required: true
+
 jobs:
   CreateRepo:
     name: "Deploy New Repositories"
     runs-on: ubuntu-latest
     steps:
     - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
-      env:
-        GH_TOKEN: ${{ secrets.GH_PAT }}
       run: |
         REPO_NAME="${{ github.event.inputs.repoName }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
@@ -50,8 +62,6 @@ jobs:
           --include-all-branches --template=$ORG_NAME/template-repo 
 
     - name: Add TeamA as a Reviewer Team
-      env:
-        GH_TOKEN: ${{ secrets.GH_PAT }}
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
@@ -66,7 +76,7 @@ jobs:
       run: |
         REPO_NAME="${{ env.REPOSITORY_NAME }}"
         ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        GH_PAT="${{ secrets.GH_PAT }}"
+        GH_PAT="${{ env.GH_TOKEN }}"
         
         # Enable branch protection for Main branch
         curl -X PUT -H "Authorization: token $GH_PAT" \
@@ -105,24 +115,58 @@ jobs:
       run: |
         echo "REPO_NAME=${{ env.REPOSITORY_NAME }}" >> "$GITHUB_OUTPUT"
 
-  # CreateWorkspace:
-  #   needs: create-repo
-  #   name: "Create new tfc-workspace"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v2
+  CreateWorkspace:
+    needs: create-repo
+    name: "Create new tfc-workspace"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-  #   - name: Clone the worskspace repo
-  #     run: |
-  #       GH_PAT="${{ secrets.GH_PAT }}"
-  #       REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
-  #       ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-  #       WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
-  #       git clone https://$GH_PAT@github.com/$ORG_NAME/$REPO_NAME.git
-  #       cd ${{ github.workspace }}/$REPO_NAME
-  #       git config --global user.email "Demouser@gmail.com"
-  #       git config --global user.name "DemoUser"
-  #       git checkout development
-  #       git branch feat-$WORKSPACE_NAME
-  #       git checkout feat-$WORKSPACE_NAME
+    - name: Clone the worskspace repo
+      run: |
+        GH_PAT="${{ env.GH_TOKEN }}"
+        REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+        WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
+        git clone https://$GH_PAT@github.com/$ORG_NAME/$REPO_NAME.git
+        cd ${{ github.workspace }}/$REPO_NAME
+        git config --global user.email "Demouser@gmail.com"
+        git config --global user.name "DemoUser"
+        git checkout development
+        git branch feat-$WORKSPACE_NAME
+        git checkout feat-$WORKSPACE_NAME
+      
+    - name: Manipulate and Update Workspace Object
+      run: |
+        WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
+        VARIABLE_SET_NAME="${{ github.event.inputs.workspaceVariableSetName }}"
+        TAG_NAMES='${{ github.event.inputs.workspaceTagsName }}'
+        PROJECT_NAME="${{ github.event.inputs.workspaceProjectName }}"
+        REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+
+        sed -i "s|abc_workspace|$WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s|abc_variable_set|$VARIABLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s|abc_project_name|$PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+        sed -i "s|tags|$TAG_NAMES|g" ${{ github.workspace }}/template-workspaces.tfvars
+
+        UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
+        cd ${{ github.workspace }}/$REPO_NAME
+        
+        sed -i '$ s|}||' workspaces.tfvars
+        echo "$UPDATED_OBJECT" >> workspaces.tfvars
+        echo "}" >> workspaces.tfvars
+        terraform fmt --recursive
+        cat workspaces.tfvars
+      shell: bash
+    
+    - name:  Create pull request from feature branch to development branch
+      run: |
+        REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+        WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
+
+        cd ${{ github.workspace }}/$REPO_NAME
+        git add .
+        git commit -m "$WORKSPACE_NAME workspace added."
+        git push origin feat-$WORKSPACE_NAME
+        gh pr create --base development --head feat-$WORKSPACE_NAME --title "Feature to Development PR for adding $WORKSPACE_NAME workspace" --body ""
