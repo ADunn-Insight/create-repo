@@ -41,7 +41,7 @@ jobs:
         REPO_DESCRIPTION="${{ env.REPO_DESCRIPTION }}"
         TEAM_NAME="${{ env.TEAM_NAME }}"
 
-        gh repo create $ORG_NAME/$REPO_NAME --public --description "$DESCRIPTION" \
+        gh repo create $ORG_NAME/$REPO_NAME --public --description "$REPO_DESCRIPTION" \
           --include-all-branches --template=$ORG_NAME/template-repo 
 
     - name: Add TeamA as a Reviewer Team
