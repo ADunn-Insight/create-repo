@@ -4,7 +4,7 @@ env:
   ORGANIZATION_NAME: 'chvi-devops'
   TEAM_NAME: 'TeamA'
   GH_TOKEN: ${{ secrets.GH_PAT }}
-  
+
 on:
   workflow_dispatch:
     inputs:
@@ -105,24 +105,24 @@ jobs:
       run: |
         echo "REPO_NAME=${{ env.REPOSITORY_NAME }}" >> "$GITHUB_OUTPUT"
 
-  CreateWorkspace:
-    needs: create-repo
-    name: "Create new tfc-workspace"
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  # CreateWorkspace:
+  #   needs: create-repo
+  #   name: "Create new tfc-workspace"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Clone the worskspace repo
-      run: |
-        GH_PAT="${{ secrets.GH_PAT }}"
-        REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
-        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
-        WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
-        git clone https://$GH_PAT@github.com/$ORG_NAME/$REPO_NAME.git
-        cd ${{ github.workspace }}/$REPO_NAME
-        git config --global user.email "Demouser@gmail.com"
-        git config --global user.name "DemoUser"
-        git checkout development
-        git branch feat-$WORKSPACE_NAME
-        git checkout feat-$WORKSPACE_NAME
+  #   - name: Clone the worskspace repo
+  #     run: |
+  #       GH_PAT="${{ secrets.GH_PAT }}"
+  #       REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+  #       ORG_NAME="${{ env.ORGANIZATION_NAME }}"
+  #       WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
+  #       git clone https://$GH_PAT@github.com/$ORG_NAME/$REPO_NAME.git
+  #       cd ${{ github.workspace }}/$REPO_NAME
+  #       git config --global user.email "Demouser@gmail.com"
+  #       git config --global user.name "DemoUser"
+  #       git checkout development
+  #       git branch feat-$WORKSPACE_NAME
+  #       git checkout feat-$WORKSPACE_NAME
