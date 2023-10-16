@@ -61,7 +61,7 @@ jobs:
         gh api --method PUT \
           /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
         
-        sleep 10
+        sleep 5
     
     - name: Configure Branch Protection
       run: |
