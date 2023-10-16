@@ -17,13 +17,13 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Read and use parameters
-        run: |
-          echo "REPO_NAME=$(yq eval '.REPO_NAME' parameters.yml)" >> "$GITHUB_ENV"
-          echo "REPO_DESCRIPTION=$(yq eval '.REPO_DESCRIPTION' parameters.yml)" >> "$GITHUB_ENV"
-          echo "TFC_WORKSPACE_NAME=$(yq eval '.TFC_WORKSPACE_NAME' parameters.yml)" >> "$GITHUB_ENV"
-          echo "TFC_WORKSPACE_TAGS_NAME=$(yq eval '.TFC_WORKSPACE_TAGS_NAME' parameters.yml)" >> "$GITHUB_ENV"
-          echo "TFC_WORKSPACE_VARAIBLE_SET_NAME=$(yq eval '.TFC_WORKSPACE_VARAIBLE_SET_NAME' parameters.yml)" >> "$GITHUB_ENV"
-          echo "TFC_WORKSPACE_PROJECT_NAME=$(yq eval '.TFC_WORKSPACE_PROJECT_NAME' parameters.yml)" >> "$GITHUB_ENV"
+      run: |
+        echo "REPO_NAME=$(yq eval '.REPO_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "REPO_DESCRIPTION=$(yq eval '.REPO_DESCRIPTION' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFC_WORKSPACE_NAME=$(yq eval '.TFC_WORKSPACE_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFC_WORKSPACE_TAGS_NAME=$(yq eval '.TFC_WORKSPACE_TAGS_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFC_WORKSPACE_VARAIBLE_SET_NAME=$(yq eval '.TFC_WORKSPACE_VARAIBLE_SET_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFC_WORKSPACE_PROJECT_NAME=$(yq eval '.TFC_WORKSPACE_PROJECT_NAME' parameters.yml)" >> "$GITHUB_ENV"
       
     - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
       run: |
