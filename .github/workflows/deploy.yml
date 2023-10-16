@@ -20,15 +20,11 @@ jobs:
       run: |
         echo "REPO_NAME=$(yq eval '.REPO_NAME' parameters.yml)" >> "$GITHUB_ENV"
         echo "REPO_DESCRIPTION=$(yq eval '.REPO_DESCRIPTION' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFC_WORKSPACE_NAME=$(yq eval '.TFC_WORKSPACE_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFC_WORKSPACE_TAGS_NAME=$(yq eval '.TFC_WORKSPACE_TAGS_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFC_WORKSPACE_VARAIBLE_SET_NAME=$(yq eval '.TFC_WORKSPACE_VARAIBLE_SET_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFC_WORKSPACE_PROJECT_NAME=$(yq eval '.TFC_WORKSPACE_PROJECT_NAME' parameters.yml)" >> "$GITHUB_ENV"
       
     - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
       run: |
-        REPO_NAME="${{ env.REPO_NAME }}"
         ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
 
         if gh api repos/$ORG_NAME/$REPO_NAME --silent 2>/dev/null; then
           echo "Repository $ORG_NAME/$REPO_NAME exists."
@@ -40,9 +36,9 @@ jobs:
 
     - name: Create Repository
       run: |
-        REPO_DESCRIPTION="${{ env.REPO_DESCRIPTION }}"
-        REPO_NAME="${{ env.REPO_NAME }}"
         ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
+        REPO_DESCRIPTION="${{ env.REPO_DESCRIPTION }}"
         TEAM_NAME="${{ env.TEAM_NAME }}"
 
         gh repo create $ORG_NAME/$REPO_NAME --public --description "$DESCRIPTION" \
@@ -50,8 +46,8 @@ jobs:
 
     - name: Add TeamA as a Reviewer Team
       run: |
-        REPO_NAME="${{ env.REPO_NAME }}"
         ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
         gh api --method PUT \
@@ -61,8 +57,8 @@ jobs:
     
     - name: Configure Branch Protection
       run: |
-        REPO_NAME="${{ env.REPO_NAME }}"
         ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
         GH_PAT="${{ env.GH_TOKEN }}"
         
         # Enable branch protection for Main branch
@@ -106,6 +102,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Read and use parameters
+      run: |
+        echo "TFC_WORKSPACE_NAME=$(yq eval '.TFC_WORKSPACE_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFC_WORKSPACE_TAGS_NAME=$(yq eval '.TFC_WORKSPACE_TAGS_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFC_WORKSPACE_VARAIBLE_SET_NAME=$(yq eval '.TFC_WORKSPACE_VARAIBLE_SET_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFC_WORKSPACE_PROJECT_NAME=$(yq eval '.TFC_WORKSPACE_PROJECT_NAME' parameters.yml)" >> "$GITHUB_ENV"
+
     - name: Clone the worskspace repo
       run: |
         GH_PAT="${{ env.GH_TOKEN }}"
@@ -122,11 +125,11 @@ jobs:
       
     - name: Manipulate and Update Workspace Object
       run: |
+        WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
         TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
         TFC_WORKSPACE_VARAIBLE_SET_NAME="${{ env.TFC_WORKSPACE_VARAIBLE_SET_NAME }}"
         TFC_WORKSPACE_PROJECT_NAME="${{ env.TFC_WORKSPACE_PROJECT_NAME }}"
         TFC_WORKSPACE_TAGS_NAME='${{ env.TFC_WORKSPACE_TAGS_NAME }}'
-        WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
 
         sed -i "s|abc_workspace|$TFC_WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
         sed -i "s|abc_variable_set|$TFC_WORKSPACE_VARAIBLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
@@ -145,9 +148,9 @@ jobs:
     
     - name:  Create pull request from feature branch to development branch
       run: |
+        ORG_NAME="${{ env.ORG_NAME }}"
         WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
         TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
-        ORG_NAME="${{ env.ORG_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
         cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
