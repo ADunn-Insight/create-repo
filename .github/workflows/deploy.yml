@@ -29,7 +29,7 @@ on:
         required: true
 
 jobs:
-  CreateRepo:
+  create_repo:
     name: "Deploy New Repositories"
     runs-on: ubuntu-latest
     steps:
@@ -115,8 +115,8 @@ jobs:
       run: |
         echo "REPO_NAME=${{ env.REPOSITORY_NAME }}" >> "$GITHUB_OUTPUT"
 
-  CreateWorkspace:
-    needs: create-repo
+  create_workspace:
+    needs: create_repo
     name: "Create new tfc-workspace"
     runs-on: ubuntu-latest
     steps:
