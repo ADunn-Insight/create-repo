@@ -160,10 +160,11 @@ jobs:
       run: |
         REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
         WORKSPACE_NAME="${{ github.event.inputs.workspaceName }}"
+        ORG_NAME="${{ env.ORGANIZATION_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
         cd ${{ github.workspace }}/$REPO_NAME
         git add .
         git commit -m "$WORKSPACE_NAME workspace added."
         git push origin feat-$WORKSPACE_NAME
-        gh pr create --base development --head feat-$WORKSPACE_NAME --fill --reviewer $TEAM_SLUG_NAME
+        gh pr create --base development --head feat-$WORKSPACE_NAME --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
