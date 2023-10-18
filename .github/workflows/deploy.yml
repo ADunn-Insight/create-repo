@@ -140,12 +140,13 @@ jobs:
           cp ${{ github.workspace }}/tfvars/test.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
         fi
 
-        git add .
-        git commit -m "Updated main.tf file and added tfvars file"
-        git push origin feat-config
-        gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
-    
-
+        if ${{ env.NETWORK_SPOKE_MODULE == 'true' && env.TEST_TFVARS_FILE == 'true' }}; then
+          git add .
+          git commit -m "Updated main.tf file and added tfvars file"
+          git push origin feat-config
+          gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
+        fi
+      
   create_workspace:
     needs: create_repo
     name: "Create new tfc-workspace"
