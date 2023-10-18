@@ -140,9 +140,9 @@ jobs:
           cp ${{ github.workspace }}/tfvars/test.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
         fi
 
-        if ${{ env.NETWORK_SPOKE_MODULE == 'true' && env.TEST_TFVARS_FILE == 'true' }}; then
+        if ${{ env.NETWORK_SPOKE_MODULE == 'true' || env.TEST_TFVARS_FILE == 'true' }}; then
           git add .
-          git commit -m "Updated main.tf file and added tfvars file"
+          git commit -m "Updated files"
           git push origin feat-config
           gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
         fi
