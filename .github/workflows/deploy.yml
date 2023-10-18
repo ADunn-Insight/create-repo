@@ -94,6 +94,54 @@ jobs:
           }'
       shell: bash
 
+    - name: Output created repository name
+      run: |
+        echo "CREATED_REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
+
+  configure-templete-repo:
+    needs: create_repo
+    name: "Configure templete repo"
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Read and use parameters
+      run: |
+        echo "NETWORK_SPOKE_MODULE=$(yq eval '.NETWORK_SPOKE_MODULE' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TEST_TFVARS_FILE=$(yq eval '.TEST_TFVARS_FILE' parameters.yml)" >> "$GITHUB_ENV"
+
+    - name: Configure repo
+      run: |
+        GH_PAT="${{ env.GH_TOKEN }}"
+        CREATED_REPO_NAME="${{ needs.create_repo.outputs.CREATED_REPO_NAME }}"
+        ORG_NAME="${{ env.ORG_NAME }}"
+        TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
+
+        git clone https://$GH_PAT@github.com/$ORG_NAME/$CREATED_REPO_NAME.git
+        cd ${{ github.workspace }}/$CREATED_REPO_NAME
+        git config --global user.email "Demouser@gmail.com"
+        git config --global user.name "DemoUser"
+        git checkout development
+        git branch feat-config
+        git checkout feat-config
+
+        if ${{ env.NETWORK_SPOKE_MODULE == 'true' }}; then
+          MODULE_CONTENT=$(cat "${{ github.workspace }}/modules/network-spoke.tf")
+          cd ${{ github.workspace }}/$CREATED_REPO_NAME
+          echo "$MODULE_CONTENT" >> main.tf
+        fi
+
+        if ${{ env.TEST_TFVARS_FILE == 'true' }}; then
+          cp ${{ github.workspace }}/tfvars/test.tf ${{ github.workspace }}/$CREATED_REPO_NAME
+        fi
+
+        git add .
+        git commit -m "Updated main.tf file and added tfvars file"
+        git push origin feat-config
+        gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
+    
+
   create_workspace:
     needs: create_repo
     name: "Create new tfc-workspace"
