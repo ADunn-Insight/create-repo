@@ -137,7 +137,7 @@ jobs:
         fi
 
         if ${{ env.TEST_TFVARS_FILE == 'true' }}; then
-          cp ${{ github.workspace }}/tfvars/test.tf ${{ github.workspace }}/$CREATED_REPO_NAME
+          cp ${{ github.workspace }}/tfvars/test.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
         fi
 
         git add .
