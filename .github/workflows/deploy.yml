@@ -12,6 +12,8 @@ jobs:
   create_repo:
     name: "Deploy New Repositories"
     runs-on: ubuntu-latest
+    outputs:
+      CREATED_REPO_NAME: ${{ steps.output.outputs.CREATED_REPO_NAME }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -95,6 +97,7 @@ jobs:
       shell: bash
 
     - name: Output created repository name
+      id: output
       run: |
         echo "CREATED_REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
 
@@ -123,6 +126,7 @@ jobs:
         git config --global user.email "Demouser@gmail.com"
         git config --global user.name "DemoUser"
         git checkout development
+        git pull
         git branch feat-config
         git checkout feat-config
 
