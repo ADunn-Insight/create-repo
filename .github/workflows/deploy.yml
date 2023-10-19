@@ -102,7 +102,7 @@ jobs:
   #       echo "CREATED_REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
 
   configure-created-repo:
-    needs: create_repo
+    # needs: create_repo
     name: "Configure templete repo"
     runs-on: ubuntu-latest
     steps: 
