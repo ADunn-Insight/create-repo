@@ -117,7 +117,7 @@ jobs:
     - name: Configure repo
       run: |
         GH_PAT="${{ env.GH_TOKEN }}"
-        CREATED_REPO_NAME="$demo-repo-1"
+        CREATED_REPO_NAME="demo-repo-1"
         ORG_NAME="${{ env.ORG_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
           #  ${{ needs.create_repo.outputs.CREATED_REPO_NAME }}
