@@ -138,11 +138,10 @@ jobs:
         fi
 
         echo ${{ env.TFVARS_COUNT }}
-
-        TFVARS = ${{ env.TFVARS_FILE }}
-        echo $TFVARS
+        echo ${{ env.TFVARS_FILE }}
 
         if ${{ env.TFVARS_COUNT > 0 }}; then
+          TFVARS = ${{ env.TFVARS_FILE }}
           for file in "${TFVARS[@]}";
           do 
             echo $file
