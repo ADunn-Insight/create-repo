@@ -112,8 +112,8 @@ jobs:
     - name: Read and use parameters
       run: |
         echo "NETWORK_SPOKE_MODULE=$(yq eval '.NETWORK_SPOKE_MODULE' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFVARS_FILE=$(yq eval '.TFVARS_FILE' parameters.yml)" >> "$GITHUB_ENV"
         echo "TFVARS_COUNT=$(yq eval '.TFVARS_FILE | length' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFVARS_FILE=$(cat parameters.yml | jq -r '.TFVARS_FILE | .[]')" >> "$GITHUB_ENV"
 
     - name: Configure repo
       run: |
