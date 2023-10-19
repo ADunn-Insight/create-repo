@@ -141,14 +141,14 @@ jobs:
         TFVARS = ${{ env.TFVARS_FILE }}
         echo $TFVARS
 
-        if ${{ env.TFVARS_COUNT > 0 }}; then
-          TFVARS = ${{ env.TFVARS_FILE }}
-          for file in "${TFVARS[@]}";
-          do 
-            echo $file
-            cp ${{ github.workspace }}/tfvars/$file.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
-          done
-        fi
+        # if ${{ env.TFVARS_COUNT > 0 }}; then
+        #   TFVARS = ${{ env.TFVARS_FILE }}
+        #   for file in "${TFVARS[@]}";
+        #   do 
+        #     echo $file
+        #     cp ${{ github.workspace }}/tfvars/$file.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
+        #   done
+        # fi
 
         git add .
 
