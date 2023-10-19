@@ -9,97 +9,97 @@ env:
 on: [workflow_dispatch]
 
 jobs:
-  create_repo:
-    name: "Deploy New Repositories"
-    runs-on: ubuntu-latest
-    outputs:
-      CREATED_REPO_NAME: ${{ steps.output.outputs.CREATED_REPO_NAME }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+  # create_repo:
+  #   name: "Deploy New Repositories"
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     CREATED_REPO_NAME: ${{ steps.output.outputs.CREATED_REPO_NAME }}
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
 
-    - name: Read and use parameters
-      run: |
-        echo "REPO_NAME=$(yq eval '.REPO_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "REPO_DESCRIPTION=$(yq eval '.REPO_DESCRIPTION' parameters.yml)" >> "$GITHUB_ENV"
+  #   - name: Read and use parameters
+  #     run: |
+  #       echo "REPO_NAME=$(yq eval '.REPO_NAME' parameters.yml)" >> "$GITHUB_ENV"
+  #       echo "REPO_DESCRIPTION=$(yq eval '.REPO_DESCRIPTION' parameters.yml)" >> "$GITHUB_ENV"
       
-    - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
-      run: |
-        ORG_NAME="${{ env.ORG_NAME }}"
-        REPO_NAME="${{ env.REPO_NAME }}"
+  #   - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
+  #     run: |
+  #       ORG_NAME="${{ env.ORG_NAME }}"
+  #       REPO_NAME="${{ env.REPO_NAME }}"
 
-        if gh api repos/$ORG_NAME/$REPO_NAME --silent 2>/dev/null; then
-          echo "Repository $ORG_NAME/$REPO_NAME exists."
-          exit 1
-        else
-          echo "Repository $ORG_NAME/$REPO_NAME does not exist."
-        fi
-      shell: bash
+  #       if gh api repos/$ORG_NAME/$REPO_NAME --silent 2>/dev/null; then
+  #         echo "Repository $ORG_NAME/$REPO_NAME exists."
+  #         exit 1
+  #       else
+  #         echo "Repository $ORG_NAME/$REPO_NAME does not exist."
+  #       fi
+  #     shell: bash
 
-    - name: Create Repository
-      run: |
-        ORG_NAME="${{ env.ORG_NAME }}"
-        REPO_NAME="${{ env.REPO_NAME }}"
-        REPO_DESCRIPTION="${{ env.REPO_DESCRIPTION }}"
-        TEAM_NAME="${{ env.TEAM_NAME }}"
+  #   - name: Create Repository
+  #     run: |
+  #       ORG_NAME="${{ env.ORG_NAME }}"
+  #       REPO_NAME="${{ env.REPO_NAME }}"
+  #       REPO_DESCRIPTION="${{ env.REPO_DESCRIPTION }}"
+  #       TEAM_NAME="${{ env.TEAM_NAME }}"
 
-        gh repo create $ORG_NAME/$REPO_NAME --public --description "$REPO_DESCRIPTION" \
-          --include-all-branches --template=$ORG_NAME/template-repo 
+  #       gh repo create $ORG_NAME/$REPO_NAME --public --description "$REPO_DESCRIPTION" \
+  #         --include-all-branches --template=$ORG_NAME/template-repo 
 
-    - name: Add TeamA as a Reviewer Team
-      run: |
-        ORG_NAME="${{ env.ORG_NAME }}"
-        REPO_NAME="${{ env.REPO_NAME }}"
-        TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
+  #   - name: Add TeamA as a Reviewer Team
+  #     run: |
+  #       ORG_NAME="${{ env.ORG_NAME }}"
+  #       REPO_NAME="${{ env.REPO_NAME }}"
+  #       TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
-        gh api --method PUT \
-          /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
+  #       gh api --method PUT \
+  #         /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
         
-        sleep 5
+  #       sleep 5
     
-    - name: Configure Branch Protection
-      run: |
-        ORG_NAME="${{ env.ORG_NAME }}"
-        REPO_NAME="${{ env.REPO_NAME }}"
-        GH_PAT="${{ env.GH_TOKEN }}"
+  #   - name: Configure Branch Protection
+  #     run: |
+  #       ORG_NAME="${{ env.ORG_NAME }}"
+  #       REPO_NAME="${{ env.REPO_NAME }}"
+  #       GH_PAT="${{ env.GH_TOKEN }}"
         
-        # Enable branch protection for Main branch
-        curl -X PUT -H "Authorization: token $GH_PAT" \
-          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/main/protection" -d '{
-            "required_status_checks": null,
-            "enforce_admins": null,
-            "required_pull_request_reviews": {
-              "dismiss_stale_reviews": false,
-              "require_code_owner_reviews": false,
-              "required_approving_review_count": 1
-            },
-            "restrictions": null,
-            "required_linear_history": false,
-            "allow_force_pushes": false,
-            "allow_deletions": false
-          }'
+  #       # Enable branch protection for Main branch
+  #       curl -X PUT -H "Authorization: token $GH_PAT" \
+  #         "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/main/protection" -d '{
+  #           "required_status_checks": null,
+  #           "enforce_admins": null,
+  #           "required_pull_request_reviews": {
+  #             "dismiss_stale_reviews": false,
+  #             "require_code_owner_reviews": false,
+  #             "required_approving_review_count": 1
+  #           },
+  #           "restrictions": null,
+  #           "required_linear_history": false,
+  #           "allow_force_pushes": false,
+  #           "allow_deletions": false
+  #         }'
         
-        # Enable branch protection for Development branch
-        curl -X PUT -H "Authorization: token $GH_PAT" \
-          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/development/protection" -d '{
-            "required_status_checks": null,
-            "enforce_admins": null,
-            "required_pull_request_reviews": {
-              "dismiss_stale_reviews": false,
-              "require_code_owner_reviews": false,
-              "required_approving_review_count": 1
-            },
-            "restrictions": null,
-            "required_linear_history": false,
-            "allow_force_pushes": false,
-            "allow_deletions": false
-          }'
-      shell: bash
+  #       # Enable branch protection for Development branch
+  #       curl -X PUT -H "Authorization: token $GH_PAT" \
+  #         "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/development/protection" -d '{
+  #           "required_status_checks": null,
+  #           "enforce_admins": null,
+  #           "required_pull_request_reviews": {
+  #             "dismiss_stale_reviews": false,
+  #             "require_code_owner_reviews": false,
+  #             "required_approving_review_count": 1
+  #           },
+  #           "restrictions": null,
+  #           "required_linear_history": false,
+  #           "allow_force_pushes": false,
+  #           "allow_deletions": false
+  #         }'
+  #     shell: bash
 
-    - name: Output created repository name
-      id: output
-      run: |
-        echo "CREATED_REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
+  #   - name: Output created repository name
+  #     id: output
+  #     run: |
+  #       echo "CREATED_REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
 
   configure-created-repo:
     needs: create_repo
@@ -138,6 +138,8 @@ jobs:
 
         echo "TFVARS_COUNT=${#TFVARS_FILE[@]}" >> "$GITHUB_ENV"
 
+        echo $TFVARS_COUNT
+
         if ${{ env.TFVARS_COUNT > 0 }}; then
           for file in ${{ env.TEST_TFVARS_FILE }}
           do 
@@ -152,81 +154,81 @@ jobs:
 
 
     
-  create_workspace:
-    needs: create_repo
-    name: "Create new tfc-workspace"
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+  # create_workspace:
+  #   needs: create_repo
+  #   name: "Create new tfc-workspace"
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v3
 
-    - name: Read and use parameters
-      run: |
-        echo "TFC_WORKSPACE_NAME=$(yq eval '.TFC_WORKSPACE_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFC_WORKSPACE_TAGS_NAME=$(yq eval '.TFC_WORKSPACE_TAGS_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFC_WORKSPACE_VARAIBLE_SET_NAME=$(yq eval '.TFC_WORKSPACE_VARAIBLE_SET_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "TFC_WORKSPACE_PROJECT_NAME=$(yq eval '.TFC_WORKSPACE_PROJECT_NAME' parameters.yml)" >> "$GITHUB_ENV"
-        echo "new_var_sets=$(yq eval '.new_var_sets' parameters.yml)" >> "$GITHUB_ENV"
-        echo "new_projects=$(yq eval '.new_projects' parameters.yml)" >> "$GITHUB_ENV"
+  #   - name: Read and use parameters
+  #     run: |
+  #       echo "TFC_WORKSPACE_NAME=$(yq eval '.TFC_WORKSPACE_NAME' parameters.yml)" >> "$GITHUB_ENV"
+  #       echo "TFC_WORKSPACE_TAGS_NAME=$(yq eval '.TFC_WORKSPACE_TAGS_NAME' parameters.yml)" >> "$GITHUB_ENV"
+  #       echo "TFC_WORKSPACE_VARAIBLE_SET_NAME=$(yq eval '.TFC_WORKSPACE_VARAIBLE_SET_NAME' parameters.yml)" >> "$GITHUB_ENV"
+  #       echo "TFC_WORKSPACE_PROJECT_NAME=$(yq eval '.TFC_WORKSPACE_PROJECT_NAME' parameters.yml)" >> "$GITHUB_ENV"
+  #       echo "new_var_sets=$(yq eval '.new_var_sets' parameters.yml)" >> "$GITHUB_ENV"
+  #       echo "new_projects=$(yq eval '.new_projects' parameters.yml)" >> "$GITHUB_ENV"
 
-    - name: Clone the worskspace repo
-      run: |
-        GH_PAT="${{ env.GH_TOKEN }}"
-        WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
-        ORG_NAME="${{ env.ORG_NAME }}"
-        TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
-        git clone https://$GH_PAT@github.com/$ORG_NAME/$WORKSPACE_REPO_NAME.git
-        cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
-        git config --global user.email "Demouser@gmail.com"
-        git config --global user.name "DemoUser"
-        git checkout development
-        git branch feat-$TFC_WORKSPACE_NAME
-        git checkout feat-$TFC_WORKSPACE_NAME
+  #   - name: Clone the worskspace repo
+  #     run: |
+  #       GH_PAT="${{ env.GH_TOKEN }}"
+  #       WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+  #       ORG_NAME="${{ env.ORG_NAME }}"
+  #       TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
+  #       git clone https://$GH_PAT@github.com/$ORG_NAME/$WORKSPACE_REPO_NAME.git
+  #       cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
+  #       git config --global user.email "Demouser@gmail.com"
+  #       git config --global user.name "DemoUser"
+  #       git checkout development
+  #       git branch feat-$TFC_WORKSPACE_NAME
+  #       git checkout feat-$TFC_WORKSPACE_NAME
       
-    - name: Manipulate and Update Workspace Object
-      run: |
-        WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
-        TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
-        TFC_WORKSPACE_VARAIBLE_SET_NAME="${{ env.TFC_WORKSPACE_VARAIBLE_SET_NAME }}"
-        TFC_WORKSPACE_PROJECT_NAME="${{ env.TFC_WORKSPACE_PROJECT_NAME }}"
-        TFC_WORKSPACE_TAGS_NAME='${{ env.TFC_WORKSPACE_TAGS_NAME }}'
+  #   - name: Manipulate and Update Workspace Object
+  #     run: |
+  #       WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+  #       TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
+  #       TFC_WORKSPACE_VARAIBLE_SET_NAME="${{ env.TFC_WORKSPACE_VARAIBLE_SET_NAME }}"
+  #       TFC_WORKSPACE_PROJECT_NAME="${{ env.TFC_WORKSPACE_PROJECT_NAME }}"
+  #       TFC_WORKSPACE_TAGS_NAME='${{ env.TFC_WORKSPACE_TAGS_NAME }}'
 
-        sed -i "s|sample_workspace|$TFC_WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|sample_variable_set|$TFC_WORKSPACE_VARAIBLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|sample_project_name|$TFC_WORKSPACE_PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
-        sed -i "s|sample_tags|$TFC_WORKSPACE_TAGS_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+  #       sed -i "s|sample_workspace|$TFC_WORKSPACE_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+  #       sed -i "s|sample_variable_set|$TFC_WORKSPACE_VARAIBLE_SET_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+  #       sed -i "s|sample_project_name|$TFC_WORKSPACE_PROJECT_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
+  #       sed -i "s|sample_tags|$TFC_WORKSPACE_TAGS_NAME|g" ${{ github.workspace }}/template-workspaces.tfvars
 
-        UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
-        cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
+  #       UPDATED_OBJECT=$(cat "${{ github.workspace }}/template-workspaces.tfvars")
+  #       cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
         
-        sed -i '$ s|}||' workspaces.tfvars
-        echo "$UPDATED_OBJECT" >> workspaces.tfvars
-        echo "}" >> workspaces.tfvars
-        terraform fmt --recursive
-        cat workspaces.tfvars
-      shell: bash
+  #       sed -i '$ s|}||' workspaces.tfvars
+  #       echo "$UPDATED_OBJECT" >> workspaces.tfvars
+  #       echo "}" >> workspaces.tfvars
+  #       terraform fmt --recursive
+  #       cat workspaces.tfvars
+  #     shell: bash
 
-    - name: Update Unique Variable Sets
-      run: |
-        cd ${{ github.workspace }}/${{ env.WORKSPACE_REPO_NAME }}
-        sed -i '/^unique_var_sets *= *\[/{s/\[\(.*\)\]/[\1,\n ${{ env.new_var_sets }}]/;}' workspaces.tfvars
-      shell: bash
+  #   - name: Update Unique Variable Sets
+  #     run: |
+  #       cd ${{ github.workspace }}/${{ env.WORKSPACE_REPO_NAME }}
+  #       sed -i '/^unique_var_sets *= *\[/{s/\[\(.*\)\]/[\1,\n ${{ env.new_var_sets }}]/;}' workspaces.tfvars
+  #     shell: bash
     
-    - name: Update Unique Projects
-      run: |
-        cd ${{ github.workspace }}/${{ env.WORKSPACE_REPO_NAME }}
-        sed -i '/^unique_projects *= *\[/{s/\[\(.*\)\]/[\1,\n ${{ env.new_projects }}]/;}' workspaces.tfvars
-      shell: bash
+  #   - name: Update Unique Projects
+  #     run: |
+  #       cd ${{ github.workspace }}/${{ env.WORKSPACE_REPO_NAME }}
+  #       sed -i '/^unique_projects *= *\[/{s/\[\(.*\)\]/[\1,\n ${{ env.new_projects }}]/;}' workspaces.tfvars
+  #     shell: bash
     
-    - name:  Create pull request from feature branch to development branch
-      run: |
-        ORG_NAME="${{ env.ORG_NAME }}"
-        WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
-        TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
-        TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
+  #   - name:  Create pull request from feature branch to development branch
+  #     run: |
+  #       ORG_NAME="${{ env.ORG_NAME }}"
+  #       WORKSPACE_REPO_NAME="${{ env.WORKSPACE_REPO_NAME }}"
+  #       TFC_WORKSPACE_NAME="${{ env.TFC_WORKSPACE_NAME }}"
+  #       TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
-        cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
-        git add .
-        git commit -m "$TFC_WORKSPACE_NAME workspace added."
-        git push origin feat-$TFC_WORKSPACE_NAME
-        gh pr create --base development --head feat-$TFC_WORKSPACE_NAME --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
+  #       cd ${{ github.workspace }}/$WORKSPACE_REPO_NAME
+  #       git add .
+  #       git commit -m "$TFC_WORKSPACE_NAME workspace added."
+  #       git push origin feat-$TFC_WORKSPACE_NAME
+  #       gh pr create --base development --head feat-$TFC_WORKSPACE_NAME --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
