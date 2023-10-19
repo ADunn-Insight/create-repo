@@ -140,7 +140,7 @@ jobs:
 
         echo ${{ env.TFVARS_COUNT }}
 
-        echo ${{ env.TFVARS_FILE }}
+        echo $TFVARS_FILE
 
         if ${{ env.TFVARS_COUNT > 0 }}; then
           for file in ${{ env.TFVARS_FILE }}
