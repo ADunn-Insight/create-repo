@@ -140,10 +140,10 @@ jobs:
 
         echo ${{ env.TFVARS_COUNT }}
 
-        echo $TFVARS_FILE
+        echo ${{ env.TFVARS_FILE }}
 
         if ${{ env.TFVARS_COUNT > 0 }}; then
-          for file in $TFVARS_FILE
+          for file in ${{ env.TFVARS_FILE }}
           do 
             echo $file
             cp ${{ github.workspace }}/tfvars/$file.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
