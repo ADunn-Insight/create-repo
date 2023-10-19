@@ -9,146 +9,153 @@ env:
 on: [workflow_dispatch]
 
 jobs:
-  # create_repo:
-  #   name: "Deploy New Repositories"
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     CREATED_REPO_NAME: ${{ steps.output.outputs.CREATED_REPO_NAME }}
-  #   steps:
-  #   - name: Checkout code
-  #     uses: actions/checkout@v3
+  create_repo:
+    name: "Deploy New Repositories"
+    runs-on: ubuntu-latest
+    outputs:
+      CREATED_REPO_NAME: ${{ steps.output.outputs.CREATED_REPO_NAME }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-  #   - name: Read and use parameters
-  #     run: |
-  #       echo "REPO_NAME=$(yq eval '.REPO_NAME' parameters.yml)" >> "$GITHUB_ENV"
-  #       echo "REPO_DESCRIPTION=$(yq eval '.REPO_DESCRIPTION' parameters.yml)" >> "$GITHUB_ENV"
+    - name: Read and use parameters
+      run: |
+        echo "REPO_NAME=$(yq eval '.REPO_NAME' parameters.yml)" >> "$GITHUB_ENV"
+        echo "REPO_DESCRIPTION=$(yq eval '.REPO_DESCRIPTION' parameters.yml)" >> "$GITHUB_ENV"
       
-  #   - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
-  #     run: |
-  #       ORG_NAME="${{ env.ORG_NAME }}"
-  #       REPO_NAME="${{ env.REPO_NAME }}"
+    - name: Check if Repository Already Exists and Stop Workflow If Repository Exist
+      run: |
+        ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
 
-  #       if gh api repos/$ORG_NAME/$REPO_NAME --silent 2>/dev/null; then
-  #         echo "Repository $ORG_NAME/$REPO_NAME exists."
-  #         exit 1
-  #       else
-  #         echo "Repository $ORG_NAME/$REPO_NAME does not exist."
-  #       fi
-  #     shell: bash
+        if gh api repos/$ORG_NAME/$REPO_NAME --silent 2>/dev/null; then
+          echo "Repository $ORG_NAME/$REPO_NAME exists."
+          exit 1
+        else
+          echo "Repository $ORG_NAME/$REPO_NAME does not exist."
+        fi
+      shell: bash
 
-  #   - name: Create Repository
-  #     run: |
-  #       ORG_NAME="${{ env.ORG_NAME }}"
-  #       REPO_NAME="${{ env.REPO_NAME }}"
-  #       REPO_DESCRIPTION="${{ env.REPO_DESCRIPTION }}"
-  #       TEAM_NAME="${{ env.TEAM_NAME }}"
+    - name: Create Repository
+      run: |
+        ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
+        REPO_DESCRIPTION="${{ env.REPO_DESCRIPTION }}"
+        TEAM_NAME="${{ env.TEAM_NAME }}"
 
-  #       gh repo create $ORG_NAME/$REPO_NAME --public --description "$REPO_DESCRIPTION" \
-  #         --include-all-branches --template=$ORG_NAME/template-repo 
+        gh repo create $ORG_NAME/$REPO_NAME --public --description "$REPO_DESCRIPTION" \
+          --include-all-branches --template=$ORG_NAME/template-repo 
 
-  #   - name: Add TeamA as a Reviewer Team
-  #     run: |
-  #       ORG_NAME="${{ env.ORG_NAME }}"
-  #       REPO_NAME="${{ env.REPO_NAME }}"
-  #       TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
+    - name: Add TeamA as a Reviewer Team
+      run: |
+        ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
+        TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
-  #       gh api --method PUT \
-  #         /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
+        gh api --method PUT \
+          /orgs/$ORG_NAME/teams/$TEAM_SLUG_NAME/repos/$ORG_NAME/$REPO_NAME -f permission='triage' 
         
-  #       sleep 5
+        sleep 5
     
-  #   - name: Configure Branch Protection
-  #     run: |
-  #       ORG_NAME="${{ env.ORG_NAME }}"
-  #       REPO_NAME="${{ env.REPO_NAME }}"
-  #       GH_PAT="${{ env.GH_TOKEN }}"
+    - name: Configure Branch Protection
+      run: |
+        ORG_NAME="${{ env.ORG_NAME }}"
+        REPO_NAME="${{ env.REPO_NAME }}"
+        GH_PAT="${{ env.GH_TOKEN }}"
         
-  #       # Enable branch protection for Main branch
-  #       curl -X PUT -H "Authorization: token $GH_PAT" \
-  #         "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/main/protection" -d '{
-  #           "required_status_checks": null,
-  #           "enforce_admins": null,
-  #           "required_pull_request_reviews": {
-  #             "dismiss_stale_reviews": false,
-  #             "require_code_owner_reviews": false,
-  #             "required_approving_review_count": 1
-  #           },
-  #           "restrictions": null,
-  #           "required_linear_history": false,
-  #           "allow_force_pushes": false,
-  #           "allow_deletions": false
-  #         }'
+        # Enable branch protection for Main branch
+        curl -X PUT -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/main/protection" -d '{
+            "required_status_checks": null,
+            "enforce_admins": null,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": false,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": 1
+            },
+            "restrictions": null,
+            "required_linear_history": false,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }'
         
-  #       # Enable branch protection for Development branch
-  #       curl -X PUT -H "Authorization: token $GH_PAT" \
-  #         "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/development/protection" -d '{
-  #           "required_status_checks": null,
-  #           "enforce_admins": null,
-  #           "required_pull_request_reviews": {
-  #             "dismiss_stale_reviews": false,
-  #             "require_code_owner_reviews": false,
-  #             "required_approving_review_count": 1
-  #           },
-  #           "restrictions": null,
-  #           "required_linear_history": false,
-  #           "allow_force_pushes": false,
-  #           "allow_deletions": false
-  #         }'
-  #     shell: bash
+        # Enable branch protection for Development branch
+        curl -X PUT -H "Authorization: token $GH_PAT" \
+          "https://api.github.com/repos/$ORG_NAME/$REPO_NAME/branches/development/protection" -d '{
+            "required_status_checks": null,
+            "enforce_admins": null,
+            "required_pull_request_reviews": {
+              "dismiss_stale_reviews": false,
+              "require_code_owner_reviews": false,
+              "required_approving_review_count": 1
+            },
+            "restrictions": null,
+            "required_linear_history": false,
+            "allow_force_pushes": false,
+            "allow_deletions": false
+          }'
+      shell: bash
 
-  #   - name: Output created repository name
-  #     id: output
-  #     run: |
-  #       echo "CREATED_REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
+    - name: Output created repository name
+      id: output
+      run: |
+        echo "CREATED_REPO_NAME=${{ env.REPO_NAME }}" >> "$GITHUB_OUTPUT"
 
-  # configure-created-repo:
-  #   needs: create_repo
-  #   name: "Configure templete repo"
-  #   runs-on: ubuntu-latest
-  #   steps: 
-  #   - name: Checkout code
-  #     uses: actions/checkout@v3
+  configure-created-repo:
+    needs: create_repo
+    name: "Configure templete repo"
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-  #   - name: Read and use parameters
-  #     run: |
-  #       echo "NETWORK_SPOKE_MODULE=$(yq eval '.NETWORK_SPOKE_MODULE' parameters.yml)" >> "$GITHUB_ENV"
-  #       echo "TEST_TFVARS_FILE=$(yq eval '.TEST_TFVARS_FILE' parameters.yml)" >> "$GITHUB_ENV"
+    - name: Read and use parameters
+      run: |
+        echo "NETWORK_SPOKE_MODULE=$(yq eval '.NETWORK_SPOKE_MODULE' parameters.yml)" >> "$GITHUB_ENV"
+        echo "TFVARS_FILE=$(yq eval '.TFVARS_FILE' parameters.yml)" >> "$GITHUB_ENV"
 
-  #   - name: Configure repo
-  #     run: |
-  #       GH_PAT="${{ env.GH_TOKEN }}"
-  #       CREATED_REPO_NAME="${{ needs.create_repo.outputs.CREATED_REPO_NAME }}"
-  #       ORG_NAME="${{ env.ORG_NAME }}"
-  #       TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
+    - name: Configure repo
+      run: |
+        GH_PAT="${{ env.GH_TOKEN }}"
+        CREATED_REPO_NAME="${{ needs.create_repo.outputs.CREATED_REPO_NAME }}"
+        ORG_NAME="${{ env.ORG_NAME }}"
+        TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
 
-  #       git clone https://$GH_PAT@github.com/$ORG_NAME/$CREATED_REPO_NAME.git
-  #       cd ${{ github.workspace }}/$CREATED_REPO_NAME
-  #       git config --global user.email "Demouser@gmail.com"
-  #       git config --global user.name "DemoUser"
-  #       git checkout development
-  #       git pull
-  #       git branch feat-config
-  #       git checkout feat-config
+        git clone https://$GH_PAT@github.com/$ORG_NAME/$CREATED_REPO_NAME.git
+        cd ${{ github.workspace }}/$CREATED_REPO_NAME
+        git config --global user.email "Demouser@gmail.com"
+        git config --global user.name "DemoUser"
+        git checkout development
+        git pull
+        git branch feat-config
+        git checkout feat-config
 
-  #       if ${{ env.NETWORK_SPOKE_MODULE == 'true' }}; then
-  #         MODULE_CONTENT=$(cat "${{ github.workspace }}/modules/network-spoke.tf")
-  #         cd ${{ github.workspace }}/$CREATED_REPO_NAME
-  #         echo "$MODULE_CONTENT" >> main.tf
-  #       fi
+        if ${{ env.NETWORK_SPOKE_MODULE == 'true' }}; then
+          MODULE_CONTENT=$(cat "${{ github.workspace }}/modules/network-spoke.tf")
+          cd ${{ github.workspace }}/$CREATED_REPO_NAME
+          echo "$MODULE_CONTENT" >> main.tf
+        fi
 
-  #       if ${{ env.TEST_TFVARS_FILE == 'true' }}; then
-  #         cp ${{ github.workspace }}/tfvars/test.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
-  #       fi
+        echo "TFVARS_COUNT=${#TFVARS_FILE[@]}" >> "$GITHUB_ENV"
 
-  #       git add .
+        if ${{ env.TFVARS_COUNT > 0 }}; then
+          for file in ${{ env.TEST_TFVARS_FILE }}
+          do 
+            cp ${{ github.workspace }}/tfvars/$file.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
+          done
+        fi
+
+        git add .
         
-  #       git commit -m "Updated files"
-  #       git push origin feat-config
-  #       gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
+        if [[ $(git status --porcelain) ]]; then
+          git commit -m "Updated files"
+          git push origin feat-config
+          gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
+        fi
 
     
   create_workspace:
-    # needs: create_repo
+    needs: create_repo
     name: "Create new tfc-workspace"
     runs-on: ubuntu-latest
     steps:
