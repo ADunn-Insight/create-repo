@@ -146,12 +146,10 @@ jobs:
         fi
 
         git add .
-        
-        if [[ $(git status --porcelain) ]]; then
-          git commit -m "Updated files"
-          git push origin feat-config
-          gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
-        fi
+        git commit -m "Updated files"
+        git push origin feat-config
+        gh pr create --base development --head feat-config --fill --reviewer $ORG_NAME/$TEAM_SLUG_NAME
+
 
     
   create_workspace:
