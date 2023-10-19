@@ -139,7 +139,7 @@ jobs:
 
         echo "TFVARS_COUNT=${#TFVARS_FILE[@]}" >> "$GITHUB_ENV"
 
-        echo $TFVARS_COUNT
+        echo $TFVARS_FILE
 
         if ${{ env.TFVARS_COUNT > 0 }}; then
           for file in ${{ env.TEST_TFVARS_FILE }}
