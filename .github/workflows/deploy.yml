@@ -113,7 +113,7 @@ jobs:
       run: |
         echo "NETWORK_SPOKE_MODULE=$(yq eval '.NETWORK_SPOKE_MODULE' parameters.yml)" >> "$GITHUB_ENV"
         echo "TFVARS_COUNT=$(yq eval '.TFVARS_FILE | length' parameters.yml)" >> "$GITHUB_ENV"
-        TFVARS_FILE=($(yq eval '.TFVARS_FILE[]' parameters.yml)) >> "$GITHUB_ENV"
+        TFVARS_FILE=($(yq eval '.TFVARS_FILE' parameters.yml)) >> "$GITHUB_ENV"
 
     - name: Configure repo
       run: |
@@ -139,10 +139,11 @@ jobs:
 
         echo ${{ env.TFVARS_COUNT }}
 
-        echo ${{ env.TFVARS_FILE }}
+        TFVARS = ${{ env.TFVARS_FILE }}
+        echo $TFVARS
 
         if ${{ env.TFVARS_COUNT > 0 }}; then
-          for file in ${{ env.TFVARS_FILE }}
+          for file in "${TFVARS[@]}";
           do 
             echo $file
             cp ${{ github.workspace }}/tfvars/$file.tfvars ${{ github.workspace }}/$CREATED_REPO_NAME
