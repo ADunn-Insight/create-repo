@@ -148,7 +148,7 @@ jobs:
 
     
   create_workspace:
-    needs: create_repo
+    # needs: create_repo
     name: "Create new tfc-workspace"
     runs-on: ubuntu-latest
     steps:
