@@ -113,13 +113,14 @@ jobs:
       run: |
         echo "NETWORK_SPOKE_MODULE=$(yq eval '.NETWORK_SPOKE_MODULE' parameters.yml)" >> "$GITHUB_ENV"
         echo "TFVARS_FILE=$(yq eval '.TFVARS_FILE' parameters.yml)" >> "$GITHUB_ENV"
-
+ 
     - name: Configure repo
       run: |
         GH_PAT="${{ env.GH_TOKEN }}"
-        CREATED_REPO_NAME="${{ needs.create_repo.outputs.CREATED_REPO_NAME }}"
+        CREATED_REPO_NAME="$demo-repo-1"
         ORG_NAME="${{ env.ORG_NAME }}"
         TEAM_SLUG_NAME=$(echo "${{ env.TEAM_NAME }}" | tr '[:upper:]' '[:lower:]')
+          #  ${{ needs.create_repo.outputs.CREATED_REPO_NAME }}
 
         git clone https://$GH_PAT@github.com/$ORG_NAME/$CREATED_REPO_NAME.git
         cd ${{ github.workspace }}/$CREATED_REPO_NAME
